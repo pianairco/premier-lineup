@@ -8,7 +8,7 @@ server:
   port: 8443
   redirect:
     from: 80
-    to: 443
+    to: 8443
 debug:
   tenant:
     if-null: support

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Profile;
 import javax.servlet.ServletContext;
 
 @Configuration
-@Profile("develop")
+@Profile({"develop", "product" })
 public class ServletConfig implements ServletContextInitializer {
     @Override
     public void onStartup(ServletContext servletContext) {

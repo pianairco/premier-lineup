@@ -9,9 +9,10 @@ import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactor
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
-//@Configuration
-//@Profile("product")
+@Configuration
+@Profile("develop")
 public class RedirectToHttpsConfig {
     @Value("${server.port}")
     private Integer port;
