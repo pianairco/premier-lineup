@@ -21,8 +21,8 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-@RestController
-@DependsOn("ActiveMQSpec")
+//@RestController
+//@DependsOn("ActiveMQSpec")
 @DispatcherQueue(beanName = "asyncTestRestQueue", queueName = "piana.http.dispatcher.queue")
 public class AsyncTestRest {
     protected final Map<String, AsyncContext> httpRequestExchangeMap = new LinkedHashMap<>();

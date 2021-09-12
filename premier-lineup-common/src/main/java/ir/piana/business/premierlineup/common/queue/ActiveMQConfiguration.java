@@ -17,14 +17,14 @@ import org.springframework.web.context.support.StandardServletEnvironment;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
-@EnableJms
-@Configuration
+//@EnableJms
+//@Configuration
 @Slf4j
 public class ActiveMQConfiguration {
-    @Autowired
+//    @Autowired
     private GenericWebApplicationContext context;
 
-    @Bean("ActiveMQSpec")
+/*    @Bean("ActiveMQSpec")
     public ActiveMQSpec getActiveMQSpec() {
         AutowireCapableBeanFactory factory = context.getAutowireCapableBeanFactory();
         BeanDefinitionRegistry registry = (BeanDefinitionRegistry) factory;
@@ -73,7 +73,7 @@ public class ActiveMQConfiguration {
 //            }
 //        }
         return activeMQSpec;
-    }
+    }*/
 
 //    @Bean
 //    @Primary
