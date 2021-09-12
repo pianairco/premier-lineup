@@ -1,0 +1,41 @@
+<div class="container">
+  <div class="row">
+    <div class="col col-sm-12 col-md-8 col-lg-6">
+      <div class="container-fluid m-0 p-0">
+        <div class="row py-2" style="border: solid 1px gray; border-radius: 8px;">
+          <div class="col col-12 my-1">
+            <div>
+              <select class="form-select" [(ngModel)]="formation" (ngModelChange)="onChange($event)">
+                <option *ngFor="let formation of formations"
+                        [ngValue]="formation.value">{{formation.title}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col col-12">
+            <div>
+              <select class="form-select" [(ngModel)]="color" (ngModelChange)="onChangeColor($event)">
+                <option *ngFor="let color of colors"
+                        [ngValue]="color.value">{{color.title}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col col-12 my-1"
+               style="min-height: 512px; min-width: 384px;"
+               #rendererContainer (resized)="onResize($event)"></div>
+        </div>
+      </div>
+    </div>
+    <div class="col col-sm-12 col-md-4 col-lg-6">
+      <ng-container *ngFor="let item of lineup | keyvalue">
+        <div class="card my-1">
+          <div class="card-body">
+            <h5 class="card-title">{{lineup[item.key].getFirstName()}}</h5>
+            <p class="card-text">{{lineup[item.key].getLastName()}}</p>
+            <a href="#" class="btn btn-primary">Select</a>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>
+

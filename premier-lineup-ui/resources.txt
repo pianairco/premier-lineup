@@ -1,0 +1,5 @@
+https://www.npmjs.com/package/three
+https://stackblitz.com/edit/angular7-playground-j1yzza?file=package.json
+https://stackoverflow.com/questions/59149154/how-to-use-three-js-with-angular-7
+https://discourse.threejs.org/t/angular-12-threejs/2739/7
+https://discourse.threejs.org/t/threejs-with-angular-10-flex-layout/20362

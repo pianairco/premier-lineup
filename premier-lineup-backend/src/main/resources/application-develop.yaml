@@ -1,0 +1,27 @@
+server:
+  ssl:
+    key-store-type: PKCS12
+    key-store: classpath:keystore/multishop.p12
+    key-store-password: AsadMasad@1366
+    key-alias: multishop
+    enabled: true
+  port: 8443
+  redirect:
+    from: 80
+    to: 443
+debug:
+  tenant:
+    if-null: support
+login:
+  redirect:
+    url: https://piana.ir:8443
+database:
+  show-sql: true
+  pool-size: 5
+  platform: h2
+  support:
+    url: jdbc:h2:file:./data/support
+    #    url: jdbc:h2:mem:support
+    username: support
+    password: s
+    driverClassName: org.h2.Driver
