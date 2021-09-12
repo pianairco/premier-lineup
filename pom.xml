@@ -36,6 +36,8 @@
 				<groupId>nl.captcha</groupId>
 				<artifactId>simplecaptcha</artifactId>
 				<version>1.2.1</version>
+				<scope>system</scope>
+				<systemPath>${project.basedir}/libs/premier-lineup-ui-1.2.1.jar</systemPath>
 			</dependency>
 			<dependency>
 				<groupId>commons-dbutils</groupId>
