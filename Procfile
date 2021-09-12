@@ -1,1 +1,1 @@
-web: java -jar premier-lineup-backend/target/premier-lineup-backend-*.jar
+web: java  $JAVA_OPTS -jar premier-lineup-backend/target/premier-lineup-backend-*.jar
