@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@Profile("develop")
+@Profile("develop, product")
 public class RedirectToHttpsConfig {
     @Value("${server.port}")
     private Integer port;

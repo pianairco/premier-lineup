@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="36" height="40" viewBox="0 0 36 40">
+  <g id="profile_pic_icon" data-name="profile pic icon" transform="translate(-647 -381)">
+    <g id="Group_5468" data-name="Group 5468" transform="translate(647 381)">
+      <g id="Rectangle_2221" data-name="Rectangle 2221" fill="none" stroke="#8f8f8f" stroke-width="2">
+        <rect width="36" height="40" rx="2" stroke="none"/>
+        <rect x="1" y="1" width="34" height="38" rx="1" fill="none"/>
+      </g>
+    </g>
+    <g id="Group_5900" data-name="Group 5900" transform="translate(650 386)">
+      <g id="Group_4945" data-name="Group 4945" transform="translate(8.017 13.759)">
+        <path id="Path_12452" data-name="Path 12452" d="M17.652,13.759a6.538,6.538,0,0,1-2.593.645,7.49,7.49,0,0,1-2.711-.645c-2.388,0-4.331,1.514-4.331,3.376V23.97a.789.789,0,0,0,.866.675H21.117a.789.789,0,0,0,.866-.675V17.135C21.983,15.273,20.04,13.759,17.652,13.759Z" transform="translate(-8.017 -13.759)" fill="#8f8f8f" stroke="#8f8f8f" stroke-width="1.5"/>
+      </g>
+    </g>
+    <g id="Group_5901" data-name="Group 5901" transform="translate(651.602 388.601)">
+      <g id="Group_4947" data-name="Group 4947" transform="translate(9.792 2.276)">
+        <path id="Path_12453" data-name="Path 12453" d="M13.4,2.276a3.607,3.607,0,1,0,3.607,3.608A3.612,3.612,0,0,0,13.4,2.276Z" transform="translate(-9.792 -2.276)" fill="#8f8f8f" stroke="#8f8f8f" stroke-width="1.5"/>
+      </g>
+    </g>
+  </g>
+</svg>

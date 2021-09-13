@@ -5,6 +5,7 @@ import {Position} from '@lineup-app/model/Position';
 import {Formation} from '@lineup-app/model/Formation';
 import {Lineup_11} from '@lineup-app/model/Lineup';
 import {AbstractTeammateService, Teammate} from '@lineup-app/service/teammate/abstract-teammate.service';
+import {TranslateService} from "@ngx-translate/core";
 
 @Component({
   selector: 'app-lineup',
@@ -48,10 +49,18 @@ export class LineupComponent implements OnInit, AfterViewInit {
   scene: THREE.Scene;
   teammates: Teammate[] = [];
 
-  constructor(private teammateService: AbstractTeammateService) {
+  constructor(
+    /*public translate: TranslateService,*/
+    private teammateService: AbstractTeammateService) {
     this.scene = new THREE.Scene();
     this.renderer = new THREE.WebGLRenderer({ alpha: true });
     this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+    /*translate.addLangs(['en', 'fa']);
+    translate.setDefaultLang('fa');
+
+    const browserLang = translate.getBrowserLang();
+    translate.use(browserLang.match(/en|fa/) ? browserLang : 'en');*/
   }
 
   // @ts-ignore

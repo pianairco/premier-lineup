@@ -25,7 +25,6 @@
 
 	<modules>
 		<module>premier-lineup-backend</module>
-		<module>premier-lineup-server</module>
 		<module>premier-lineup-gateway</module>
         <module>premier-lineup-common</module>
 		<module>module-parent</module>

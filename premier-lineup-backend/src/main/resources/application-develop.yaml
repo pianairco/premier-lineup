@@ -1,14 +1,14 @@
 server:
+  port: 8443
+  redirect:
+    from: 80
+    to: 8443
   ssl:
     key-store-type: PKCS12
     key-store: classpath:keystore/multishop.p12
     key-store-password: AsadMasad@1366
     key-alias: multishop
     enabled: true
-  port: 8443
-  redirect:
-    from: 80
-    to: 8443
 debug:
   tenant:
     if-null: support

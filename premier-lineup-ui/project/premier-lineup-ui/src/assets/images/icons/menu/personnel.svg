@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30" viewBox="0 0 30 30">
+  <defs>
+    <clipPath id="clip-path5">
+      <rect id="Rectangle_2077" data-name="Rectangle 2077" width="30" height="30" transform="translate(1878 342)"  stroke="#707070" stroke-width="1"/>
+    </clipPath>
+  </defs>
+  <g id="personnel" transform="translate(-1878 -342)" clip-path="url(#clip-path5)">
+    <g id="_23-teamwork" data-name="23-teamwork" transform="translate(1878 340.125)">
+      <g id="Glyph">
+        <circle id="Ellipse_123" data-name="Ellipse 123" cx="3.75" cy="3.75" r="3.75" transform="translate(20 7.5)" />
+        <circle id="Ellipse_124" data-name="Ellipse 124" cx="3.75" cy="3.75" r="3.75" transform="translate(2.5 7.5)" />
+        <circle id="Ellipse_125" data-name="Ellipse 125" cx="5" cy="5" r="5" transform="translate(10 3.75)" />
+        <path id="Path_12375" data-name="Path 12375" d="M27.5,16.25H23.078a4.969,4.969,0,0,1,.672,2.5V27.5h5A1.25,1.25,0,0,0,30,26.25v-7.5A2.5,2.5,0,0,0,27.5,16.25Z" />
+        <path id="Path_12376" data-name="Path 12376" d="M6.923,16.25H2.5A2.5,2.5,0,0,0,0,18.75v7.5A1.25,1.25,0,0,0,1.25,27.5h5V18.75a4.969,4.969,0,0,1,.673-2.5Z" />
+        <path id="Path_12377" data-name="Path 12377" d="M18.75,13.75H17.5L15,21.25l-2.5-7.5H11.25A3.75,3.75,0,0,0,7.5,17.5V28.75A1.25,1.25,0,0,0,8.75,30h12.5a1.25,1.25,0,0,0,1.25-1.25V17.5a3.75,3.75,0,0,0-3.75-3.75Z" />
+      </g>
+    </g>
+  </g>
+</svg>

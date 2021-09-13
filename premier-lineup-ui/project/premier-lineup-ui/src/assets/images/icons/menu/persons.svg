@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30" viewBox="0 0 30 30">
+  <defs>
+    <clipPath id="clip-path6">
+      <rect id="Rectangle_2086" data-name="Rectangle 2086" width="30" height="30" transform="translate(1877 397)"  stroke="#707070" stroke-width="1"/>
+    </clipPath>
+  </defs>
+  <g id="Mask_Group_22" data-name="Mask Group 22" transform="translate(-1877 -397)" clip-path="url(#clip-path6)">
+    <g id="group" transform="translate(1877 397)">
+      <g id="Group_4942" data-name="Group 4942">
+        <g id="Group_4941" data-name="Group 4941">
+          <path id="Path_12450" data-name="Path 12450" d="M25.669,16.015h-2.32a6.035,6.035,0,0,1,.366,2.074v8.769a2.586,2.586,0,0,1-.149.866H27.4a2.6,2.6,0,0,0,2.6-2.6v-4.78A4.335,4.335,0,0,0,25.669,16.015Z" />
+        </g>
+      </g>
+      <g id="Group_4944" data-name="Group 4944">
+        <g id="Group_4943" data-name="Group 4943">
+          <path id="Path_12451" data-name="Path 12451" d="M6.285,18.089a6.035,6.035,0,0,1,.366-2.074H4.331A4.336,4.336,0,0,0,0,20.346v4.78a2.6,2.6,0,0,0,2.6,2.6H6.434a2.587,2.587,0,0,1-.149-.866Z" />
+        </g>
+      </g>
+      <g id="Group_4946" data-name="Group 4946">
+        <g id="Group_4945" data-name="Group 4945">
+          <path id="Path_12452" data-name="Path 12452" d="M17.652,13.759h-5.3a4.336,4.336,0,0,0-4.331,4.331v8.769a.866.866,0,0,0,.866.866H21.117a.866.866,0,0,0,.866-.866V18.089A4.336,4.336,0,0,0,17.652,13.759Z" />
+        </g>
+      </g>
+      <g id="Group_4948" data-name="Group 4948">
+        <g id="Group_4947" data-name="Group 4947">
+          <path id="Path_12453" data-name="Path 12453" d="M15,2.276a5.207,5.207,0,1,0,5.208,5.208A5.214,5.214,0,0,0,15,2.276Z" />
+        </g>
+      </g>
+      <g id="Group_4950" data-name="Group 4950">
+        <g id="Group_4949" data-name="Group 4949">
+          <path id="Path_12454" data-name="Path 12454" d="M5.855,7.13a3.893,3.893,0,1,0,3.9,3.9A3.9,3.9,0,0,0,5.855,7.13Z" />
+        </g>
+      </g>
+      <g id="Group_4952" data-name="Group 4952">
+        <g id="Group_4951" data-name="Group 4951">
+          <path id="Path_12455" data-name="Path 12455" d="M24.145,7.13a3.9,3.9,0,1,0,3.9,3.9A3.9,3.9,0,0,0,24.145,7.13Z" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="30" height="30" viewBox="0 0 30 30">
+  <defs>
+    <clipPath id="clip-path4">
+      <rect id="Rectangle_2081" data-name="Rectangle 2081" width="30" height="30" transform="translate(1878 596)" fill="#fff" stroke="#707070" stroke-width="1"/>
+    </clipPath>
+  </defs>
+  <g id="documents" transform="translate(-1878 -596)" clip-path="url(#clip-path4)">
+    <g id="copy" transform="translate(1878 596)">
+      <path id="Path_12399" data-name="Path 12399" d="M5,8.438A5.944,5.944,0,0,1,10.938,2.5H22.354A3.431,3.431,0,0,0,19.063,0H4.688A3.44,3.44,0,0,0,1.25,3.438V22.813A3.44,3.44,0,0,0,4.688,26.25H5Z" />
+      <path id="Path_12400" data-name="Path 12400" d="M25.313,5H10.938A3.44,3.44,0,0,0,7.5,8.438V26.563A3.44,3.44,0,0,0,10.938,30H25.313a3.44,3.44,0,0,0,3.438-3.437V8.438A3.44,3.44,0,0,0,25.313,5Zm-2.5,21.25H13.438a.938.938,0,0,1,0-1.875h9.375a.938.938,0,0,1,0,1.875Zm0-5H13.438a.938.938,0,0,1,0-1.875h9.375a.938.938,0,0,1,0,1.875Zm0-4.375H13.438a.938.938,0,0,1,0-1.875h9.375a.938.938,0,0,1,0,1.875Zm0-5H13.438a.938.938,0,0,1,0-1.875h9.375a.938.938,0,0,1,0,1.875Z" />
+    </g>
+  </g>
+</svg>

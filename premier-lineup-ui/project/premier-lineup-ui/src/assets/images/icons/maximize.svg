@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="8.669" height="8.66" viewBox="0 0 8.669 8.66">
+  <g id="maximize" transform="translate(-243.88 -52.2)">
+    <g id="Path_160" data-name="Path 160" transform="translate(245 52.2)" fill="none">
+      <path d="M0,0H7.549V7.5H0Z" stroke="none"/>
+      <path d="M 0.6000046730041504 0.5999999046325684 L 0.6000046730041504 6.900000095367432 L 6.949464321136475 6.900000095367432 L 6.949464321136475 0.5999999046325684 L 0.6000046730041504 0.5999999046325684 M 4.291534423828125e-06 0 L 7.549464702606201 0 L 7.549464702606201 7.5 L 4.291534423828125e-06 7.5 L 4.291534423828125e-06 0 Z" stroke="none" fill="#253970"/>
+    </g>
+    <path id="Path_159" data-name="Path 159" d="M258.685,1316.08v5.316h5.2" transform="translate(-14.505 -1260.837)" fill="none" stroke="#253970" stroke-width="0.6"/>
+    <path id="Icon_ionic-ios-arrow-round-down" data-name="Icon ionic-ios-arrow-round-down" d="M3.192,4.513,2.1,5.6V.471h-.63V5.6L.443,4.56c-.3.3-.212.214-.443.446L1.793,6.8,3.63,4.956Z" transform="translate(247.464 59.674) rotate(-135)" fill="#253970"/>
+  </g>
+</svg>

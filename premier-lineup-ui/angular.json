@@ -68,7 +68,11 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "premier-lineup-ui:build"
+            "browserTarget": "premier-lineup-ui:build",
+            "ssl": true,
+            "proxyConfig": "project/premier-lineup-ui/src/proxy.conf.js",
+            "host": "localhost",
+            "port": 443,
           },
           "configurations": {
             "production": {

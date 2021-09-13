@@ -1,3 +1,8 @@
+// ng commands
+ng generate module auth --route auth --module app.module
+
+
+// web resources
 https://www.npmjs.com/package/three
 https://stackblitz.com/edit/angular7-playground-j1yzza?file=package.json
 https://stackoverflow.com/questions/59149154/how-to-use-three-js-with-angular-7

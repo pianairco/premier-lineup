@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20.58" height="21.592" viewBox="0 0 20.58 21.592">
+  <g id="گشایش" transform="translate(-26.57 -74)">
+    <g id="Group_6694" data-name="Group 6694" transform="translate(26.57 74)">
+      <g id="Group_6693" data-name="Group 6693" transform="translate(0)">
+        <path id="Path_13027" data-name="Path 13027" d="M116.809,200.842a.841.841,0,0,0-.841-.842H107.3a.841.841,0,1,0,0,1.683h8.667A.841.841,0,0,0,116.809,200.842Z" transform="translate(-103.098 -191.585)" />
+        <path id="Path_13028" data-name="Path 13028" d="M107.3,280a.841.841,0,0,0,0,1.683h5.264a.841.841,0,0,0,0-1.683Z" transform="translate(-103.098 -268.219)" />
+        <path id="Path_13029" data-name="Path 13029" d="M35.615,19.859H29.936a1.685,1.685,0,0,1-1.683-1.683V3.366a1.685,1.685,0,0,1,1.683-1.683H40.282a1.685,1.685,0,0,1,1.683,1.683V8.541a.841.841,0,0,0,1.683,0V3.366A3.37,3.37,0,0,0,40.282,0H29.936A3.37,3.37,0,0,0,26.57,3.366v14.81a3.37,3.37,0,0,0,3.366,3.366h5.679a.841.841,0,0,0,0-1.683Z" transform="translate(-26.57 0)" />
+        <path id="Path_13031" data-name="Path 13031" d="M115.968,120H107.3a.841.841,0,1,0,0,1.683h8.667a.841.841,0,1,0,0-1.683Z" transform="translate(-103.098 -114.951)" />
+        <path id="Path_13032" data-name="Path 13032" d="M30,12v8.382" transform="translate(-14.361 0.46)"  stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+        <path id="Path_13033" data-name="Path 13033" d="M33.882,16.5H25.5" transform="translate(-14.052 0.073)"  stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+      </g>
+    </g>
+  </g>
+</svg>
