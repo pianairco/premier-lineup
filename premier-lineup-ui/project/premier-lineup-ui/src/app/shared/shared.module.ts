@@ -1,38 +1,28 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {NgModule} from '@angular/core';
+import {CommonModule} from '@angular/common';
 import {RouterModule} from "@angular/router";
-import {BrowserModule} from "@angular/platform-browser";
 import {TranslateModule} from "@ngx-translate/core";
 import {MaterialModule} from "@lineup-app/shared/module/material.module";
-import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {AngularResizedEventModule} from "angular-resize-event";
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 @NgModule({
   declarations: [],
   imports: [
-    // vendor
-    FormsModule,
-    ReactiveFormsModule,
     CommonModule,
     RouterModule,
     MaterialModule,
-    // material
-
-
-    // local
-
+    AngularResizedEventModule,
   ],
   exports: [
-    FormsModule,
-    ReactiveFormsModule,
     // vendor
     CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     RouterModule,
     MaterialModule,
-    // material
-
-
-    // local
-    TranslateModule
+    AngularResizedEventModule,
+    TranslateModule,
   ]
 })
 export class SharedModule { }

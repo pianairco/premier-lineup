@@ -18,7 +18,7 @@
         <div class="modal-header pb-0" style="border-bottom: none">
           <div class="container">
             <div class="col-12 text-center py-3" style="color: blue; font-weight: bold; font-size: 24px">
-              <img src="../../../assets/images/logo.png" class="img-thumbnail">
+              <img src="assets/images/common/logo.jpg" class="img-thumbnail">
             </div>
             <div class="col-12 text-center py-3" style="color: blue; font-weight: bold; font-size: 24px">
               ورود به سامانه
@@ -28,39 +28,17 @@
         <div class="modal-body" >
           <div class="container p-0">
             <div class="row">
+              <form [formGroup]="form">
               <div class="col-12 text-center">
                 <div class="container p-0">
                   <div class="col-12 text-center">
-                    <form class="example-form">
-                      <mat-form-field class="example-full-width">
-                        <mat-label>انتخاب صندوق</mat-label>
-                        <input type="text"
-                               required
-                               class="input is-normal"
-                               placeholder="انتخاب کنید"
-                               aria-label="Number"
-                               matInput
-                               (ngModelChange)="fundChange($event)"
-                               [formControl]="myControl"
-                               [matAutocomplete]="auto">
-                        <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" [displayWith]="displayFn">
-                          <mat-option *ngFor="let fund of (fundSubject | async)"
-                                      [matTooltip]="fund['title']"
-                                      [value]="fund">
-                            {{fund['title'] | slice:18}}
-                            <!--              {{fund['title']}}-->
-                          </mat-option>
-                        </mat-autocomplete>
-                      </mat-form-field>
-                    </form>
-                  </div>
-                  <div class="col-12 text-center">
-                    <p>
+                    <p style="margin-bottom: 4px">
                       <mat-form-field appearance="outline" style="width: 100%;">
-                        <mat-label>نام کاربری</mat-label>
+                        <mat-label>شماره موبایل</mat-label>
                         <input type="text" matInput
+                               formControlName="mobile"
                                [disabled]="wait"
-                               [(ngModel)]="loginInfo.username" required style="padding-bottom: 4px !important;">
+                               required style="padding-bottom: 4px !important;">
                         <mat-icon matSuffix>account_circle</mat-icon>
                       </mat-form-field>
                     </p>
@@ -70,8 +48,9 @@
                       <mat-form-field appearance="outline" style="width: 100%;">
                         <mat-label>کلمه عبور</mat-label>
                         <input matInput [attr.type]="hide ? 'password' : 'text'"
+                               formControlName="password"
                                [disabled]="wait"
-                               [(ngModel)]="loginInfo.password" required>
+                               [value]="loginInfo.password" required>
                         <mat-icon matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
                           {{hide ? 'visibility_off' : 'visibility'}}
                         </mat-icon>
@@ -83,9 +62,10 @@
                       <mat-form-field appearance="outline" style="width: 100%;">
                         <mat-label>کد امنیتی</mat-label>
                         <input matInput [attr.type]="hide ? 'password' : 'text'"
+                               formControlName="captcha"
                                [disabled]="wait"
                                required>
-                        <div matSuffix>
+                        <span matSuffix>
                           <img [src]="getLinkPicture()" style="height: 31px"/>
                           <!--<img  style="width: 96px; height: 32px; padding: 6px 2px;"
                                 src="loginInfo.captcha">-->
@@ -94,20 +74,7 @@
                                   style="padding: 9px 2px 3px 2px; pointer-events: initial;">
                             <span class="material-icons">autorenew</span>
                           </button>
-                        </div>
-                      </mat-form-field>
-                    </p>
-                  </div>
-                  <div class="col-12 text-center">
-                    <p style="margin-bottom: 4px">
-                      <mat-form-field appearance="outline" style="width: 100%;">
-                        <mat-label>توکن امنیتی</mat-label>
-                        <input matInput [attr.type]="hide ? 'password' : 'text'"
-                               [disabled]="wait"
-                               [(ngModel)]="loginInfo.accessToken" required>
-                        <mat-icon matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
-                          {{'generating_tokens'}}
-                        </mat-icon>
+                        </span>
                       </mat-form-field>
                     </p>
                   </div>
@@ -115,7 +82,7 @@
                     <div class="d-grid gap-2">
                       <button
                         class="btn btn-outline-success"
-                        mat-raised-button color="primary" (click)="login()" [disabled]="wait" style="height: 43px">
+                        mat-raised-button color="primary" (click)="requestOtp()" [disabled]="wait" style="height: 43px">
                         <mat-spinner  *ngIf="wait"></mat-spinner>
                         <span *ngIf="!wait">ورود</span>
                       </button>
@@ -123,6 +90,7 @@
                   </div>
                 </div>
               </div>
+              </form>
             </div>
           </div>
         </div>

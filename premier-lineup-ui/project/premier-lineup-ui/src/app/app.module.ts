@@ -1,20 +1,19 @@
 import {APP_INITIALIZER, Injector, NgModule} from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
 
-import { AppRoutingModule } from '@lineup-app/app-routing.module';
-import { AppComponent } from '@lineup-app/app.component';
-import { SquadComponent } from '@lineup-app/component/squad/squad.component';
-import { TestComponent } from '@lineup-app/component/test/test.component';
-import {OrthoComponent} from '@lineup-app/component/ortho/ortho.component';
-import {Squad2dComponent} from '@lineup-app/component/squad2d/squad2d.component';
-import {AngularResizedEventModule} from 'angular-resize-event';
-import {AbstractTeammateService} from '@lineup-app/service/teammate/abstract-teammate.service';
-import {TeammateService} from '@lineup-app/service/teammate/teammate.service';
-import {MockTeammateService} from '@lineup-app/service/teammate/mock-teammate.service';
-import {HttpClient, HttpClientModule} from "@angular/common/http";
-import {TranslateModule, TranslateLoader, TranslateService} from '@ngx-translate/core';
-import {TranslateHttpLoader} from "@ngx-translate/http-loader";
-import {LOCATION_INITIALIZED} from "@angular/common";
+import {AppRoutingModule} from '@lineup-app/app-routing.module';
+import {AppComponent} from '@lineup-app/app.component';
+import {HttpClient, HttpClientModule} from '@angular/common/http';
+import {TranslateLoader, TranslateModule, TranslateService} from '@ngx-translate/core';
+import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {CommonModule, LOCATION_INITIALIZED} from '@angular/common';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {BrowserModule} from '@angular/platform-browser';
+import {AbstractTeammateService} from '@lineup-app/rest/service/teammate/abstract-teammate.service';
+import {MockTeammateService} from '@lineup-app/rest/service/teammate/mock-teammate.service';
+import {TeammateService} from '@lineup-app/rest/service/teammate/teammate.service';
+import { TopbarComponent } from './core/component/topbar/topbar.component';
+import {SharedModule} from "@lineup-app/shared/shared.module";
+import { RootComponent } from './root/root.component';
 
 const production = [
   { provide: AbstractTeammateService, useClass: TeammateService }
@@ -52,15 +51,15 @@ export function ApplicationInitializerFactory(translate: TranslateService, injec
 @NgModule({
   declarations: [
     AppComponent,
-    SquadComponent,
-    Squad2dComponent,
-    TestComponent,
-    OrthoComponent,
+    TopbarComponent,
+    RootComponent
   ],
   imports: [
     BrowserModule,
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
     AppRoutingModule,
-    AngularResizedEventModule,
     HttpClientModule,
     TranslateModule.forRoot({
       loader: {
@@ -68,10 +67,10 @@ export function ApplicationInitializerFactory(translate: TranslateService, injec
         useFactory: HttpLoaderFactory,
         deps: [HttpClient]
       }
-    })
+    }),
+    SharedModule
   ],
   exports: [
-    AngularResizedEventModule
   ],
   providers: [
     {

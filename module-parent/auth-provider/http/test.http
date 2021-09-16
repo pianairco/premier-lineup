@@ -2,3 +2,13 @@ POST http://localhost/test/api/zarinpal/test/redirect
 
 ###
 GET https://diana.ir/api/modules/general/menu/list
+
+###
+POST https://smspanel.trez.ir/api/smsAPI/SendCode
+content-type: application/json;charset=UTF-8
+Authorization: Basic bWpyYWhtYXRpOkFzYWRNYXNhZEAxMzY2
+
+{
+  "Mobile": "09128855402",
+  "Message": "یکبار رمز 1234"
+}

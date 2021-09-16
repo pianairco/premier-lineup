@@ -1,7 +1,7 @@
 .modal-background {
   background-color: #bf9be5;
   background-size: cover;
-  background-image: url('../../../assets/images/login-bg.jpg');
+  background-image: url('../../../../assets/images/common/login-bg.jpg');
 }
 
 .field {

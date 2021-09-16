@@ -2,34 +2,97 @@
   <div class="row">
     <h2>{{ 'HOME.TITLE' | translate }}</h2>
   </div>
-  <div class="row">
-    <div class="col col-sm-12 col-md-8 col-lg-6">
+  <div class="row gx-5 m-0">
+    <div class="col col-sm-12 col-md-6 my-2 px-3">
       <div class="container-fluid m-0 p-0">
-        <div class="row py-2" style="border: solid 1px gray; border-radius: 8px;">
-          <div class="col col-12 my-1">
+        <div class="row py-2 box m-0">
+          <form [formGroup]="form">
+            <div class="col col-12 my-2">
+              <div class="row">
+                <div class="col col-6">
+                  <div class="d-grid gap-2">
+                    <button class="btn btn-sm btn-outline-warning" (click)="cameraDown()">
+                      <mat-icon>zoom_in</mat-icon>
+                    </button>
+                  </div>
+                </div>
+                <div class="col col-6">
+                  <div class="d-grid gap-2">
+                    <button class="btn btn-sm btn-outline-warning" (click)="cameraUp()">
+                      <mat-icon>zoom_out</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <div class="col col-12 my-2">
             <div>
-              <select class="form-select" [(ngModel)]="formation" (ngModelChange)="onChange($event)">
+              <select class="form-select" formControlName="formation" >
                 <option *ngFor="let formation of formations"
-                        [ngValue]="formation.value">{{formation.title}}</option>
+                        [value]="formation.value">{{formation.title}}</option>
               </select>
             </div>
           </div>
           <div class="col col-12">
             <div>
-              <select class="form-select" [(ngModel)]="color" (ngModelChange)="onChangeColor($event)">
+              <select class="form-select" formControlName="color" >
                 <option *ngFor="let color of colors"
-                        [ngValue]="color.value">{{color.title}}</option>
+                        [value]="color.value">{{color.title}}</option>
               </select>
             </div>
           </div>
-          <div class="col col-12 my-1"
-               style="min-height: 512px; min-width: 384px;"
+          <div class="col col-12 my-2"
+               style="min-height: 512px; width: 100%;"
                #rendererContainer (resized)="onResize($event)"></div>
+          </form>
         </div>
       </div>
     </div>
-    <div class="col col-sm-12 col-md-4 col-lg-6">
-      <ng-container *ngFor="let item of lineup | keyvalue">
+    <div class="col col-sm-12 col-md-6 my-2 px-3">
+      <div class="container-fluid m-0 p-0">
+        <div class="row py-2 justify-content-center box m-0 px-2">
+          <ng-container *ngFor="let item of teammates; let i = index">
+        <mat-card class="example-card">
+          <mat-card-header>
+            <div mat-card-avatar class="example-header-image"></div>
+
+            <div class="container-fluid m-0 p-0">
+              <div class="row m-0 p-0 align-items-center" style="height: 40px;">
+                <div class="col col-6">
+                  <span class="badge rounded-circle bg-warning" style="height: 22px;">{{i + 1}}</span>
+                  {{item['firstName']}}
+                </div>
+                <div class="col col-6">
+                  <button *ngIf="swapMode == false"
+                          (click)="onSwapFrom(item)"
+                          class="btn btn-sm btn-outline-secondary float-left">
+                    <mat-icon >touch_app</mat-icon>
+                  </button>
+                  <button *ngIf="swapMode == true && item != swapFrom"
+                          (click)="onSwapTo(item)"
+                          class="btn btn-sm btn-outline-secondary float-left">
+                    <mat-icon>swap_vert</mat-icon>
+                  </button>
+                  <button *ngIf="swapMode == true && item == swapFrom"
+                          (click)="onSwapCancel()"
+                          class="btn btn-sm btn-outline-secondary float-left">
+                    <mat-icon>refresh</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </mat-card-header>
+        </mat-card>
+        <!--<div class="card-body">
+          <h5 class="card-title">{{item['firstName']}}</h5>
+          <p class="card-text">{{item['lastName']}}</p>
+          <a href="#" class="btn btn-primary">Select</a>
+        </div>-->
+      </ng-container>
+        </div>
+      </div>
+<!--      <ng-container *ngFor="let item of lineup | keyvalue">
         <div class="card my-1">
           <div class="card-body">
             <h5 class="card-title">{{lineup[item.key].getFirstName()}}</h5>
@@ -37,7 +100,7 @@
             <a href="#" class="btn btn-primary">Select</a>
           </div>
         </div>
-      </ng-container>
+      </ng-container>-->
     </div>
   </div>
 </div>

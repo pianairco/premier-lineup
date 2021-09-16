@@ -95,7 +95,7 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 //                        multiShopDataSources, failedDataSources, dataSourceService),
 //                        CustomAuthenticationFilter.class)
 //                .addFilter(new CustomAuthenticationFilter(authenticationManager()))
-                .addFilterBefore(new JWTAuthenticationFilter("/api/sign-in",
+                .addFilterBefore(new PianaAuthenticationFilter("/api/sign-in",
                                 authenticationManager(), passwordEncoder, authAction, env),
                         UsernamePasswordAuthenticationFilter.class)
 //                .addFilterBefore(new JWTAuthorizationFilter(authenticationManager(), authTokenModelRepository),

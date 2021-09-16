@@ -1,23 +1,25 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, ViewChild} from '@angular/core';
+
 import * as THREE from 'three';
-import {FORMATION_4_3_3, FORMATION_4_4_2, L4_3_3, L4_4_2, LD4_3_3, LD4_4_2, LU4_3_3, LU4_4_2} from '@lineup-app/config/lineups.config';
-import {Position} from '@lineup-app/model/Position';
-import {Formation} from '@lineup-app/model/Formation';
-import {Lineup_11} from '@lineup-app/model/Lineup';
-import {AbstractTeammateService, Teammate} from '@lineup-app/service/teammate/abstract-teammate.service';
-import {TranslateService} from "@ngx-translate/core";
+import {FORMATION_11} from '@lineup-app/core/config/lineups.config';
+import {Lineup_11} from '@lineup-app/core/model/Lineup';
+import {AbstractTeammateService, Teammate} from '@lineup-app/rest/service/teammate/abstract-teammate.service';
+import {FormBuilder} from "@angular/forms";
+import {from} from "rxjs";
 
 @Component({
   selector: 'app-lineup',
   templateUrl: './lineup.component.html',
   styleUrls: ['./lineup.component.css']
 })
-export class LineupComponent implements OnInit, AfterViewInit {
+export class LineupComponent /*implements OnInit, AfterViewInit*/ {
 
   // @ts-ignore
   @ViewChild('rendererContainer') rendererContainer: ElementRef;
 
   lineup: Lineup_11 = new Lineup_11();
+
+  camZ = 0;
 
   colors = [
     { title: 'white', value: 'white'},
@@ -33,14 +35,10 @@ export class LineupComponent implements OnInit, AfterViewInit {
     { title: 'pink', value: 'pink'},
   ];
 
-  color: string = this.colors[0].value;
-
   formations = [
-    { title: '4-4-2', value: FORMATION_4_4_2},
-    { title: '4-3-3', value: FORMATION_4_3_3}
+    { title: '4-4-2', value: "FORMATION_4_4_2"},
+    { title: '4-3-3', value: "FORMATION_4_3_3"}
   ];
-
-  formation: Formation = this.formations[1].value;
 
   name = 'Angular';
   renderer: THREE.WebGLRenderer;
@@ -48,13 +46,45 @@ export class LineupComponent implements OnInit, AfterViewInit {
   camera: THREE.PerspectiveCamera = null;
   scene: THREE.Scene;
   teammates: Teammate[] = [];
+  form;
+  formDto: {
+    formation: String;
+    color: string;
+  } = {
+    formation: this.formations[1].value,
+    color: this.colors[0].value
+  };
 
   constructor(
+    private builder: FormBuilder,
     /*public translate: TranslateService,*/
-    private teammateService: AbstractTeammateService) {
+    public teammateService: AbstractTeammateService) {
+    teammateService.getTeammates().subscribe(res => {
+      this.teammates = res;
+    }, err => {
+
+    });
+
     this.scene = new THREE.Scene();
     this.renderer = new THREE.WebGLRenderer({ alpha: true });
     this.camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 1000 );
+
+    this.form = this.builder.group({
+      formation: [this.formDto.formation],
+      color: [this.formDto.color]
+    });
+
+    this.form.get("formation").valueChanges.subscribe(f => {
+      console.log(JSON.stringify(f));
+      this.render();
+    });
+
+    this.form.get("color").valueChanges.subscribe(c => {
+      console.log(c);
+      this.render();
+    });
+
+    console.log(this.form.get("color").value)
 
     /*translate.addLangs(['en', 'fa']);
     translate.setDefaultLang('fa');
@@ -63,16 +93,19 @@ export class LineupComponent implements OnInit, AfterViewInit {
     translate.use(browserLang.match(/en|fa/) ? browserLang : 'en');*/
   }
 
+  baseCamZ = 870;
   // @ts-ignore
   onResize = event => {
-    console.log(event);
+    // console.log(event);
     this.renderer.setSize( (event.newWidth), (event.newHeight) );
     this.camera.aspect = (event.newWidth)  / (event.newHeight);
     this.camera = new THREE.PerspectiveCamera( 45, event.newWidth / event.newHeight, 0.1, 5000 );
     this.camera.position.x = 0;
     this.camera.position.y = 0;
-    this.camera.position.z = this.camera.aspect * 560;
-    console.log(this.camera.aspect, this.camera.position.z)
+    console.log(event.newWidth, event.newWidth / 400)
+    this.baseCamZ = (1 + (1 - event.newWidth / 400)) * 870;
+    this.camera.position.z = this.camera.aspect * this.baseCamZ + this.camZ;
+    // console.log(this.camera.aspect, this.camera.position.z)
     this.camera.updateProjectionMatrix();
   }
 
@@ -82,7 +115,8 @@ export class LineupComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.rendererContainer.nativeElement.appendChild( this.renderer.domElement );
 
-    this.camera.position.z = 620;
+    // this.camera.position.z = 620;
+    this.camera.position.z = this.camera.aspect * this.baseCamZ + this.camZ;
 
     this.render();
   }
@@ -124,13 +158,14 @@ export class LineupComponent implements OnInit, AfterViewInit {
   render() {
     this.scene.clear();
 
-    const cr7Texture = new THREE.TextureLoader().load('assets/images/person/avatar-2.png');
-    const material = new THREE.MeshBasicMaterial( {
-      map: cr7Texture,
-      color: this.getColor(this.color),
-      transparent: true
-    } );
-    for(let pos of this.formation.original) {
+    console.log(this.form.get("formation").value, FORMATION_11[this.form.get("formation").value])
+    for(let pos of FORMATION_11[this.form.get("formation").value].original) {
+      const cr7Texture = new THREE.TextureLoader().load('assets/images/person/cr7.jpg');
+      const material = new THREE.MeshBasicMaterial( {
+        map: cr7Texture,
+        color: this.getColor(this.form.get("color").value),
+        transparent: true
+      } );
       const geometry = new THREE.CircleGeometry( 20, 20 );
       const cube = new THREE.Mesh( geometry, material );
       cube.translateZ(10);
@@ -149,17 +184,56 @@ export class LineupComponent implements OnInit, AfterViewInit {
   }
 
   // @ts-ignore
-  onChangeColor(e) {
-    this.render();
-  }
-
-  // @ts-ignore
-  onChange(e) {
-    this.render();
-  }
-
-  // @ts-ignore
   asString(obj): string {
     return JSON.stringify(obj);
   }
+
+  cameraUp() {
+    this.camZ += 40;
+    this.camera.position.z = this.camera.aspect * this.baseCamZ + this.camZ;
+    this.render();
+  }
+
+  cameraDown() {
+    this.camZ -= 40;
+    this.camera.position.z = this.camera.aspect * this.baseCamZ + this.camZ;
+    this.render();
+  }
+
+  swapMode = false;
+  swapFrom: Teammate;
+  swapTo: Teammate;
+
+  onSwapFrom(item) {
+    this.swapMode = true;
+    this.swapFrom = item;
+    console.log(item);
+  }
+
+  onSwapTo(item){
+    console.log(item);
+    this.swapTo = item;
+    let fromIdx = -1;
+    let toIdx = -1;
+    for (let i = 0; i < this.teammates.length; i++) {
+      if(this.teammates[i] == this.swapFrom) {
+        fromIdx = i;
+      } else if(this.teammates[i] == this.swapTo) {
+        toIdx = i;
+      }
+      if(toIdx > -1 && fromIdx > -1)
+        break;
+    }
+    this.teammates.splice(toIdx, 1, this.swapFrom);
+    this.teammates.splice(fromIdx, 1, this.swapTo);
+    this.swapTo = null;
+    this.swapFrom = null;
+    this.swapMode = false;
+  }
+
+  onSwapCancel() {
+    this.swapMode = false;
+    this.swapFrom = null;
+  }
+
 }

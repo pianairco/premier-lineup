@@ -21,6 +21,9 @@ export class AuthenticationService {
   private _authSubject: any;
   private _appInfo: AppInfo = null;
 
+  private _uuid: string = null;
+
+
   setAppInfo(appInfo: AppInfo) {
     this._appInfo = appInfo;
     console.log(this._appInfo)
@@ -153,11 +156,25 @@ export class AuthenticationService {
     }
   }
 
-  async login(loginInfo, fund) {
+  async requestOtp(loginInfo) {
+    try {
+      let res = await axios.post(this.constantService.getRemoteServer() + '/api/auth/otp',
+        loginInfo,
+        { headers: { 'Content-Type': 'APPLICATION/JSON; charset=utf-8' } });
+      console.log(res);
+      this._uuid = res['data'];
+      // this.pianaStorageService.putObject('appInfo', this._appInfo);
+      return true;
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  async login(loginInfo) {
     try {
       let res = await axios.post(this.constantService.getRemoteServer() + '/api/sign-in',
         loginInfo,
-        { headers: { 'Content-Type': 'APPLICATION/JSON', tenant: fund } });
+        { headers: { 'Content-Type': 'APPLICATION/JSON' } });
       console.log(res);
       this.setAppInfo(res['data']);
       // this.pianaStorageService.putObject('appInfo', this._appInfo);
