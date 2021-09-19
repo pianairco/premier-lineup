@@ -44,7 +44,7 @@ public class UploadController {
 
     private static ObjectMapper jsonMapper = new ObjectMapper();
 
-    @RequestMapping(value = "/serve", method = RequestMethod.POST,
+    @RequestMapping(value = "/serve", method = RequestMethod.POST,  
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = "application/json; charset=utf8")
     public @ResponseBody

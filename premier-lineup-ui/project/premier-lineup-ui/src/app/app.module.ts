@@ -11,9 +11,13 @@ import {BrowserModule} from '@angular/platform-browser';
 import {AbstractTeammateService} from '@lineup-app/rest/service/teammate/abstract-teammate.service';
 import {MockTeammateService} from '@lineup-app/rest/service/teammate/mock-teammate.service';
 import {TeammateService} from '@lineup-app/rest/service/teammate/teammate.service';
-import { TopbarComponent } from './core/component/topbar/topbar.component';
+import {TopbarComponent} from './core/component/topbar/topbar.component';
 import {SharedModule} from "@lineup-app/shared/shared.module";
-import { RootComponent } from './root/root.component';
+import {RootComponent} from './view/root/root.component';
+import {HomeComponent} from './view/home/home.component';
+import {InitializerService} from "@lineup-app/core/service/initializer.service";
+import {AlertComponent} from './core/component/alert/alert.component';
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 const production = [
   { provide: AbstractTeammateService, useClass: TeammateService }
@@ -52,10 +56,13 @@ export function ApplicationInitializerFactory(translate: TranslateService, injec
   declarations: [
     AppComponent,
     TopbarComponent,
-    RootComponent
+    RootComponent,
+    HomeComponent,
+    AlertComponent
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -71,6 +78,7 @@ export function ApplicationInitializerFactory(translate: TranslateService, injec
     SharedModule
   ],
   exports: [
+    BrowserModule
   ],
   providers: [
     {
@@ -78,6 +86,12 @@ export function ApplicationInitializerFactory(translate: TranslateService, injec
       provide: APP_INITIALIZER,
       deps: [TranslateService, Injector],
       useFactory: ApplicationInitializerFactory
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: (initializerService: InitializerService) => () => initializerService.load(),
+      deps: [InitializerService],
+      multi: true
     },
     ...test // <--- this can be used for a complete mock runtime modus
     // ...production

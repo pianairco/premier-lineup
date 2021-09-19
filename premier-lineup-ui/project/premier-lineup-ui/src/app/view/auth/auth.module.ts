@@ -7,10 +7,12 @@ import {SharedModule} from "@lineup-app/shared/shared.module";
 import { LoginComponent } from './login/login.component';
 import {FormControl, FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {BrowserModule} from "@angular/platform-browser";
+import { ConfirmComponent } from './confirm/confirm.component';
+import { SigninComponent } from './signin/signin.component';
 
 
 @NgModule({
-  declarations: [AuthComponent, LoginComponent],
+  declarations: [AuthComponent, LoginComponent, ConfirmComponent, SigninComponent],
   exports: [
     LoginComponent
   ],

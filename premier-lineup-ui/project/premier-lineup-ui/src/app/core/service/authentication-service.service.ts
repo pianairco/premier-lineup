@@ -6,6 +6,10 @@ import {ConstantService} from "./constant.service";
 import {BehaviorSubject, Observable} from "rxjs";
 import {EditModeObject} from "./share-state.service";
 import {GeneralStateService} from "./general-state.service";
+import {Router} from "@angular/router";
+import {MatSnackBar} from "@angular/material/snack-bar";
+import {AlertComponent} from "@lineup-app/core/component/alert/alert.component";
+import {NotificationService} from "@lineup-app/core/service/notification.service";
 // import {GoogleLoginProvider, SocialAuthService} from "angularx-social-login";
 
 const googleLoginOptions = {
@@ -32,10 +36,12 @@ export class AuthenticationService {
 
   constructor(
     /*private authService: SocialAuthService,*/
+    private notificationService: NotificationService,
     private constantService: ConstantService,
     private loadingService: LoadingService,
     private generalStateService: GeneralStateService,
-    private pianaStorageService: PianaStorageService) {
+    private pianaStorageService: PianaStorageService,
+    private _snackBar: MatSnackBar) {
     this._appInfo = new AppInfo(
       false, null, null, false, false);
     this._authSubject = new BehaviorSubject<any>(this._appInfo);
@@ -64,7 +70,7 @@ export class AuthenticationService {
   }
 
   async getAppInfo() {
-    let res = await axios.post('api/app-info', {}, {headers: {}});
+    let res = await axios.post('api/auth/app-info', {}, {headers: {}});
     if (res.status === 200) {
       this.setAppInfo(res['data']);
       // console.log(appInfo);
@@ -158,30 +164,81 @@ export class AuthenticationService {
 
   async requestOtp(loginInfo) {
     try {
-      let res = await axios.post(this.constantService.getRemoteServer() + '/api/auth/otp',
+      let res = await axios.post(this.constantService.getRemoteServer() + '/api/auth/request-otp',
         loginInfo,
         { headers: { 'Content-Type': 'APPLICATION/JSON; charset=utf-8' } });
-      console.log(res);
-      this._uuid = res['data'];
+      // console.log(res);
+      if(res['data']['code'] === 0) {
+        this._uuid = res['data']['data']['uuid'];
+        console.log(this._uuid)
+        return true;
+      } else {
+        return false;
+      }
       // this.pianaStorageService.putObject('appInfo', this._appInfo);
-      return true;
+
     } catch (err) {
-      throw err;
+      return false;
+    }
+  }
+
+  async confirmOtp(otp) {
+    try {
+      let res = await axios.post(this.constantService.getRemoteServer() + '/api/auth/confirm-otp',
+        { type: 'otp', uuid: this._uuid, otp: otp },
+        { headers: { 'Content-Type': 'APPLICATION/JSON; charset=utf-8' } });
+      console.log(res);
+      if(res['data']['code'] === 0) {
+        this.setAppInfo(res['data']);
+        return true;
+      } else {
+        return false;
+      }
+      // this.pianaStorageService.putObject('appInfo', this._appInfo);
+    } catch (err) {
+      this._uuid = '';
+      return false;
     }
   }
 
   async login(loginInfo) {
     try {
-      let res = await axios.post(this.constantService.getRemoteServer() + '/api/sign-in',
+      let res = await axios.post(this.constantService.getRemoteServer() + '/api/auth/login',
         loginInfo,
         { headers: { 'Content-Type': 'APPLICATION/JSON' } });
-      console.log(res);
-      this.setAppInfo(res['data']);
-      // this.pianaStorageService.putObject('appInfo', this._appInfo);
-      // return this.appInfo;
-      return this._appInfo;
+      console.log('111', res);
+      if(res['data']['code'] == 0) {
+        this.setAppInfo(res['data']['data']);
+        return true;
+      } else {
+        this.notificationService.changeMessage("error", "not work")
+        /*this._snackBar.open("error", "close", {
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+          duration: 1000
+        });*/
+        /*this._snackBar.openFromComponent(AlertComponent, {
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+          data: {
+            duration: 4000,
+            message: "throw exception"
+          }
+        });*/
+        return false;
+      }
     } catch (err) {
-      throw err;
+      if(err['response']['status'] == 403)
+        this.notificationService.changeMessage("error", "دسترسی غیر مجاز")
+      /*this._snackBar.openFromComponent(AlertComponent, {
+        horizontalPosition: 'end',
+        verticalPosition: 'top',
+        data: {
+          message: "throw exception"
+        }
+      });
+      console.log(err)*/
+      return false;
     }
   }
 

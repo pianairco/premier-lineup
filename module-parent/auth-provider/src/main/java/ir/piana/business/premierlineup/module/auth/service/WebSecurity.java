@@ -1,5 +1,6 @@
 package ir.piana.business.premierlineup.module.auth.service;
 
+import ir.piana.business.premierlineup.common.service.PianaCacheService;
 import ir.piana.business.premierlineup.module.auth.action.AuthAction;
 import ir.piana.business.premierlineup.module.auth.data.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,9 +8,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -17,10 +20,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 @Profile("production")
 public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Autowired
@@ -31,13 +34,13 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     UserDetailsServiceImpl userDetailsService;
 
     @Autowired
+    private PianaCacheService pianaCacheService;
+
+    @Autowired
     private UserRepository appUserRepository;
 
     @Autowired
     private AuthAction authAction;
-
-    @Autowired
-    private Environment env;
 
     //https://www.logicbig.com/tutorials/spring-framework/spring-boot/jdbc-security-with-h2-console.html
     @Override
@@ -62,9 +65,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.POST, "/api/site/**").hasRole("AUTHENTICATED")
                 .antMatchers(HttpMethod.PUT, "/api/site/**").hasRole("AUTHENTICATED")
                 .antMatchers(HttpMethod.DELETE, "/api/site/**").hasRole("AUTHENTICATED")
-                .antMatchers(HttpMethod.POST, "/api/shop/**").hasRole("SITE_OWNER")
-                .antMatchers(HttpMethod.PUT, "/api/shop/**").hasRole("SITE_OWNER")
-                .antMatchers(HttpMethod.DELETE, "/api/shop/**").hasRole("SITE_OWNER")
+                .antMatchers(HttpMethod.POST, "/api/shop/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT, "/api/shop/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE, "/api/shop/**").hasRole("ADMIN")
 //                .antMatchers(HttpMethod.POST, "/api/ajax/serve").hasRole("user")
 //                .antMatchers(HttpMethod.POST, "/vavishka-shop/login").permitAll()
 //                .antMatchers(HttpMethod.POST, "/action").permitAll()//.authenticated()
@@ -95,9 +98,9 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 //                        multiShopDataSources, failedDataSources, dataSourceService),
 //                        CustomAuthenticationFilter.class)
 //                .addFilter(new CustomAuthenticationFilter(authenticationManager()))
-                .addFilterBefore(new PianaAuthenticationFilter("/api/sign-in",
-                                authenticationManager(), passwordEncoder, authAction, env),
-                        UsernamePasswordAuthenticationFilter.class)
+                /*.addFilterBefore(new PianaAuthenticationFilter("/api/sign-in",
+                                authenticationManager(), authAction, appUserRepository, pianaCacheService),
+                        UsernamePasswordAuthenticationFilter.class)*/
 //                .addFilterBefore(new JWTAuthorizationFilter(authenticationManager(), authTokenModelRepository),
 //                        UsernamePasswordAuthenticationFilter.class);
 //                .addFilter(new JWTAuthorizationFilter(authenticationManager()))
@@ -119,6 +122,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
 //        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter();
 //        return customAuthenticationFilter;
 //    }
+
+    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {

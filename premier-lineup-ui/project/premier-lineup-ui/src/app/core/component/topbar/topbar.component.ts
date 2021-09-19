@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {NotificationService} from "@lineup-app/core/service/notification.service";
 
 @Component({
   selector: 'app-topbar',
@@ -7,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TopbarComponent implements OnInit {
 
-  constructor() { }
+  constructor(private notificationService: NotificationService) { }
 
   ngOnInit(): void {
   }
 
+  showMessage() {
+    this.notificationService.changeMessage("error", "hello");
+  }
 }

@@ -8,15 +8,13 @@ import {ConstantService} from '@lineup-app/core/service/constant.service';
 import {AuthenticationService} from '@lineup-app/core/service/authentication-service.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import axios from 'axios';
-import {MatSnackBar} from "@angular/material/snack-bar";
-import {AlertComponent} from "@lineup-app/core/component/alert/alert.component";
 
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  selector: 'app-signin',
+  templateUrl: './signin.component.html',
+  styleUrls: ['./signin.component.css']
 })
-export class LoginComponent implements OnInit {
+export class SigninComponent implements OnInit {
 
   showModal: boolean = true;
   hide = true;
@@ -128,24 +126,39 @@ export class LoginComponent implements OnInit {
     return 'resources/captcha' + '?' + this.captchaCounter;
   }
 
-  login() {
+  requestOtp() {
     this.loginInfo.mobile = this.form.get("mobile").value;
 
     this.loginInfo.password = this.form.get("password").value;
     this.loginInfo.captcha = this.form.get("captcha").value;
     console.log(this.loginInfo, this.form.get("mobile").value, this.form.get("password").value)
-    let promise = this.authenticationService.login(this.loginInfo);
+    let promise = this.authenticationService.requestOtp(this.loginInfo);
     promise.then(res => {
-      if (res == true) {
+      if(res == true) {
         console.log("res is true")
-        this.router.navigate(['/root/home']);
-      } else {
-        // this._snackBar.open("throw exception", "close", {
-        //   horizontalPosition: 'end',
-        //   verticalPosition: 'top',
-        //   duration: 2000,
-        // })
+        this.router.navigate(['/auth/confirm']);
       }
+    }, err => {
+      console.log(this.myControl);
+      this.captchaCounter++;
+    });
+    // axios.post('api/sign-in', this.loginInfo, {headers: {}})
+    //   .then(res => {
+    //     console.log(res);
+    //   }, err => {
+    //     this.timeStamp = this.timeStamp + 1;
+    //     console.log(err);
+    //   });
+  }
+
+  login() {
+    let promise = this.authenticationService.login(this.loginInfo);
+    promise.then(appInfo => {
+      console.log(appInfo);
+      this.router.navigate([this.returnUrl]);
+    }, err => {
+      console.log(this.myControl);
+      this.captchaCounter++;
     });
     // axios.post('api/sign-in', this.loginInfo, {headers: {}})
     //   .then(res => {

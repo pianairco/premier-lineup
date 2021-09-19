@@ -28,8 +28,6 @@ public class UserEntity {
     private String mobile;
     @Column
     private String password;
-    @Column(name = "form_password")
-    private String formPassword;
     @Column(name = "email_verified")
     private boolean emailVerified;
     @Column
@@ -42,6 +40,8 @@ public class UserEntity {
     private String familyName;
     @Column(name = "given_name")
     private String givenName;
-    @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "userId", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private List<UserRolesEntity> userRolesEntities;
+    @Transient
+    private String otp;
 }

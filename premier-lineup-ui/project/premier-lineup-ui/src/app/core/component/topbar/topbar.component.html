@@ -9,29 +9,28 @@
     <div class="collapse navbar-collapse" id="navbarNavDropdown">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Features</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Pricing</a>
+          <a class="nav-link active" aria-current="page" href="#">خانه</a>
         </li>
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown link
+            تنظیمات
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
+            <li><a class="dropdown-item" href="#">تنظیم آواتار</a></li>
+            <li><a class="dropdown-item" href="#">اطلاعات کاربری</a></li>
           </ul>
         </li>
       </ul>
       <form class="d-flex">
-        <a class="btn btn-outline-success"
-           [routerLink]="'auth'"
-           type="button">Login</a>
+        <a class="btn btn-outline-success mx-1"
+           [routerLink]="'/auth/login'"
+           type="button">ورود به سیستم</a>
+        <a class="btn btn-outline-warning mx-1"
+           [routerLink]="'/auth/sign-in'"
+           type="button">ثبت نام</a>
+        <a class="btn btn-outline-warning mx-1"
+           (click)="showMessage()"
+           type="button">پیام</a>
       </form>
     </div>
   </div>

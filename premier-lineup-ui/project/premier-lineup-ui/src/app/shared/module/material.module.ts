@@ -30,7 +30,7 @@ import {MatGridListModule} from "@angular/material/grid-list";
 import {MatProgressSpinnerModule} from "@angular/material/progress-spinner";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatSliderModule} from "@angular/material/slider";
-import {MatSnackBarModule} from "@angular/material/snack-bar";
+import {MAT_SNACK_BAR_DEFAULT_OPTIONS, MatSnackBarModule} from "@angular/material/snack-bar";
 import {MatTabsModule} from "@angular/material/tabs";
 import {MatToolbarModule} from "@angular/material/toolbar";
 import {Icon} from "@lineup-app/shared/module/icon.enum";
@@ -78,6 +78,11 @@ const modules = [
 @NgModule({
   imports: [...modules],
   exports: [...modules],
+  providers:[
+    {
+      provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 10000}
+    },
+  ]
 })
 export class MaterialModule {
 

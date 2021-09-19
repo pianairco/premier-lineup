@@ -3,15 +3,14 @@ package ir.piana.business.premierlineup.module.auth.service;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ir.piana.business.premierlineup.common.exceptions.HttpCommonRuntimeException;
+import ir.piana.business.premierlineup.common.service.PianaCacheService;
 import ir.piana.business.premierlineup.common.util.CommonUtils;
 import ir.piana.business.premierlineup.module.auth.action.AuthAction;
 import ir.piana.business.premierlineup.module.auth.data.entity.UserEntity;
+import ir.piana.business.premierlineup.module.auth.data.repository.UserRepository;
 import ir.piana.business.premierlineup.module.auth.model.AppInfo;
-import ir.piana.business.premierlineup.module.auth.model.LoginInfo;
+import ir.piana.business.premierlineup.module.auth.model.ConfirmInfo;
 import ir.piana.business.premierlineup.module.auth.model.UserModel;
-import nl.captcha.Captcha;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -20,7 +19,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
@@ -29,48 +27,25 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class PianaAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
-
-    private Environment env;
-    private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
     private AuthAction authAction;
+    private PianaCacheService pianaCacheService;
+    private UserRepository userRepository;
 
     public PianaAuthenticationFilter(
             String loginUrl,
             AuthenticationManager authenticationManager,
-            PasswordEncoder passwordEncoder,
             AuthAction authAction,
-            Environment env) {
+            UserRepository userRepository,
+            PianaCacheService pianaCacheService) {
         super(new AntPathRequestMatcher(loginUrl));
         this.authAction = authAction;
         this.authenticationManager = authenticationManager;
-        this.passwordEncoder = passwordEncoder;
-        this.env = env;
-    }
-
-    Authentication byForm(String username, String password, String captcha, Captcha sessionCaptcha, String host)
-            throws IOException {
-        if(captcha != null && sessionCaptcha != null) {
-            if (!sessionCaptcha.isCorrect(captcha)) {
-                throw new HttpCommonRuntimeException(HttpStatus.UNAUTHORIZED, 1, "captcha failed");
-            } else if (CommonUtils.isNull(username) || CommonUtils.isNull(password)) {
-                throw new HttpCommonRuntimeException(HttpStatus.valueOf(404), 1, "access token not provided");
-            }
-        }
-
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        "form:" + host + ":" + new String(Base64.getEncoder().encode(username.getBytes(StandardCharsets.UTF_8))),
-                        password,
-//                        "form:" + new String(Base64.getEncoder().encode(loginInfo.getPassword().getBytes(StandardCharsets.UTF_8))),
-                        new ArrayList<>())
-        );
-
-        return authentication;
+        this.userRepository = userRepository;
+        this.pianaCacheService = pianaCacheService;
     }
 
     @Override
@@ -81,27 +56,26 @@ public class PianaAuthenticationFilter extends AbstractAuthenticationProcessingF
             if(authentication != null && authentication.isAuthenticated())
                 return authentication;
 
-            String host = (String) request.getAttribute("host");
             if(request.getContentType() != null &&
                     (request.getContentType().startsWith("APPLICATION/JSON") ||
                             request.getContentType().startsWith("application/json"))) {
-                LoginInfo loginInfo = new ObjectMapper().readValue(request.getInputStream(), LoginInfo.class);
-                /*if(Arrays.stream(env.getActiveProfiles()).anyMatch(p -> "develop".matches(p))) {
-                    return byForm(
-                            "rahmatii1366@gmail.com",
-                            "0000",
-                            null,
-                            null, host);
-                }*/
+                ConfirmInfo signinInfo = new ObjectMapper().readValue(request.getInputStream(), ConfirmInfo.class);
 
-                if(loginInfo != null && !CommonUtils.isNull(loginInfo.getUsername())) {
-                    Captcha sessionCaptcha = (Captcha)request.getSession().getAttribute("simpleCaptcha");
-                    if(Arrays.stream(env.getActiveProfiles()).anyMatch(p -> "develop".matches(p))) {
-                        loginInfo.setCaptcha(sessionCaptcha.getAnswer());
-                        loginInfo.setPassword("0000");
-                    }
-                    return byForm(
-                            loginInfo.getUsername(), loginInfo.getPassword(), loginInfo.getCaptcha(), sessionCaptcha, host);
+                if(signinInfo != null && !CommonUtils.isNull(signinInfo.getType()) &&
+                        signinInfo.getType().equalsIgnoreCase("otp")) {
+                    UserEntity userEntity = (UserEntity) pianaCacheService.getValue(signinInfo.getUuid());
+                    if(userEntity == null)
+                        throw new RuntimeException();
+                    else if(!userEntity.getOtp().equalsIgnoreCase(signinInfo.getOtp()))
+                        throw new RuntimeException();
+
+                    UserEntity saved = userRepository.save(userEntity);
+
+                    return authenticationManager.authenticate(
+                            new UsernamePasswordAuthenticationToken(
+                                    saved.getMobile(),
+                                    saved.getPassword(),
+                                    new ArrayList<>()));
                 } else {
                     throw new RuntimeException();
                 }
@@ -128,8 +102,6 @@ public class PianaAuthenticationFilter extends AbstractAuthenticationProcessingF
         request.getSession().setAttribute("authorization", ((User) auth.getPrincipal()).getUsername());
         request.getSession().setAttribute("user", userEntity);
 
-        String host = (String) request.getAttribute("host");
-        String tenant = (String) request.getAttribute("tenant");
         Optional<? extends GrantedAuthority> role_owner = null;
         String title = "سامانه ISMS";
 

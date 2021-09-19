@@ -82,11 +82,16 @@
                     <div class="d-grid gap-2">
                       <button
                         class="btn btn-outline-success"
-                        mat-raised-button color="primary" (click)="requestOtp()" [disabled]="wait" style="height: 43px">
+                        mat-raised-button color="primary" (click)="login()" [disabled]="wait" style="height: 43px">
                         <mat-spinner  *ngIf="wait"></mat-spinner>
                         <span *ngIf="!wait">ورود</span>
                       </button>
                     </div>
+                  </div>
+                  <div class="col col-1 text-start mt-2">
+                    <button class="btn btn-sm btn-link"
+                            type="button"
+                            style="white-space: nowrap;">فراموشی رمز عبور</button>
                   </div>
                 </div>
               </div>

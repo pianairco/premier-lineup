@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component("userDetailsService")
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -25,27 +26,14 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     PasswordEncoder passwordEncoder;
 
     @Override
-    public UserDetails loadUserByUsername(String encodedUsername) throws UsernameNotFoundException {
-        String username = null;
-        boolean isForm = false;
-        String[] split = null;
-        if(encodedUsername.contains(":")) {
-            split = encodedUsername.split(":");
-            username = new String(Base64.getDecoder().decode(username = split[split.length - 1]));
-            if(split[0].equalsIgnoreCase("form")) {
-                isForm = true;
-            } else {
-//                ToDo
-            }
-        }
-
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         UserEntity appUserEntity = userRepository.findByUsername(username);
         if (appUserEntity == null) {
-            throw new UsernameNotFoundException(encodedUsername);
+            throw null;
         }
-        List<GrantedAuthority> authorities = new ArrayList<>();
-//        List<GrantedAuthority> authorities = appUserEntity.getUserRolesEntities().stream()
-//                .map(e -> new SimpleGrantedAuthority(e.getRoleName())).collect(Collectors.toList());
+//        List<GrantedAuthority> authorities = new ArrayList<>();
+        List<GrantedAuthority> authorities = appUserEntity.getUserRolesEntities().stream()
+                .map(e -> new SimpleGrantedAuthority(e.getRoleName())).collect(Collectors.toList());
 
         authorities.add(new SimpleGrantedAuthority("ROLE_AUTHENTICATED"));
         return new UserModel(appUserEntity.getUsername(),

@@ -37,14 +37,12 @@ public class AuthAction extends AjaxController.Action {
                             .filter(e -> e.getAuthority().equalsIgnoreCase("ROLE_ADMIN"))
                             .map(e -> true).findFirst().orElse(false))
                     .username(userEntity.getUsername())
-                    .siteInfo(SiteInfo.builder().title(title).build())
                     .build();
         } else {
             appInfo = AppInfo.builder()
                     .isLoggedIn(false)
                     .isAdmin(false)
                     .username(authentication.getName())
-                    .siteInfo(SiteInfo.builder().title(title).build())
                     .build();
         }
         return appInfo;
