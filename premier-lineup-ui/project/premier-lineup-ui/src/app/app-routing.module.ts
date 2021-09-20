@@ -9,6 +9,7 @@ const routes: Routes = [
   { path: 'root', component: RootComponent, children: [
       { path: 'home', component: HomeComponent },
       { path: 'lineup', loadChildren: () => import('./view/lineup/lineup.module').then(m => m.LineupModule) },
+      { path: 'setting', loadChildren: () => import('./view/setting/setting.module').then(m => m.SettingModule) },
     ]
   },
 ];

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {NotificationService} from "@lineup-app/core/service/notification.service";
+import {AuthenticationService} from "@lineup-app/core/service/authentication-service.service";
 
 @Component({
   selector: 'app-topbar',
@@ -8,12 +9,12 @@ import {NotificationService} from "@lineup-app/core/service/notification.service
 })
 export class TopbarComponent implements OnInit {
 
-  constructor(private notificationService: NotificationService) { }
+  constructor(private notificationService: NotificationService,
+              public authService: AuthenticationService) { }
 
   ngOnInit(): void {
-  }
-
-  showMessage() {
-    this.notificationService.changeMessage("error", "hello");
+    this.authService.authSubject.subscribe(res => {
+      console.log(res, JSON.stringify(res), res.isLoggedIn)
+    })
   }
 }

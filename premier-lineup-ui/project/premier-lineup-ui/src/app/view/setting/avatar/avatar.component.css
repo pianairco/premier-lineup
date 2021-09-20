@@ -1,0 +1,11 @@
+.btn-group.special {
+  display: flex;
+}
+
+.special .btn {
+  flex: 1
+}
+
+#fileControlInput {
+  display: none;
+}

@@ -27,7 +27,6 @@ export class AuthenticationService {
 
   private _uuid: string = null;
 
-
   setAppInfo(appInfo: AppInfo) {
     this._appInfo = appInfo;
     console.log(this._appInfo)
@@ -71,17 +70,8 @@ export class AuthenticationService {
 
   async getAppInfo() {
     let res = await axios.post('api/auth/app-info', {}, {headers: {}});
-    if (res.status === 200) {
-      this.setAppInfo(res['data']);
-      // console.log(appInfo);
-      // console.log(JSON.stringify(appInfo));
-      // console.log(localStorage.getItem('appInfo'));
-
-      // this.pianaStorageService.putObject('appInfo', this.appInfo);
-      // localStorage.setItem('currentUser', JSON.stringify(appInfo))
-      // console.log(this.pianaStorageService.getObject('appInfo')['username'])
-      // console.log(this.pianaStorageService.getFieldValue('appInfo', 'username'))
-      // console.log(JSON.parse(localStorage.getItem('appInfo'))['username'])
+    if (res.status === 200 && res['data']['code'] == 0) {
+      this.setAppInfo(res['data']['data']);
     }
   }
 
@@ -249,10 +239,10 @@ export class AuthenticationService {
       // let appInfo = this.pianaStorageService.getObject('appInfo');
       if(!this._appInfo.isLoggedIn)
         return;
-      let res = await axios.post('api/sign-out', {headers: {}});
+      let res = await axios.post(this.constantService.getRemoteServer() + 'api/auth/logout', {headers: {}});
       console.log(res);
-      if(res.status == 200) {
-        this.setAppInfo(res['data']);
+      if(res.status == 200 && res['data']['code'] == 0) {
+        this.setAppInfo(res['data']['data']);
         this.generalStateService.title = '';
         // this.setAppInfo(new AppInfo(null, null, null, false, false));
         // this.pianaStorageService.putObject('appInfo', res['data']);

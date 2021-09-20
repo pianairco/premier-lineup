@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.piana.business.premierlineup.common.dev.sqlrest.SqlQueryService;
 import ir.piana.business.premierlineup.common.model.ResponseModel;
 import org.apache.commons.io.IOUtils;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -27,9 +28,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("api/upload")
+@RequestMapping("api/upload-manager")
 @Profile("production")
-public class UploadController {
+public class UploadManager {
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -51,23 +52,12 @@ public class UploadController {
     public @ResponseBody
     ResponseEntity upload(HttpServletRequest request,
                           @RequestHeader("image_upload_group") String group,
-                          @RequestParam("file") MultipartFile file,
-                          RedirectAttributes redirectAttributes) {
-        String rotation = request.getHeader("image-upload-rotation");
-        GroupProperties groupProperties = storageService.getGroupProperties(group);
-        String path = storageService.store(file, group, rotation);
+                          @RequestParam("file") MultipartFile file) {
         try {
-            String beanName = storageProperties.getBean();
-            AfterSaveImageAction bean = (AfterSaveImageAction) applicationContext.getBean(beanName);
-            BiFunction<HttpServletRequest, String, ResponseEntity> field = bean.getField(
-                    groupProperties.getAfterSaveImageActivity());
-            return field.apply(request, path);
-        } catch (NoSuchFieldException e){
-            e.printStackTrace();
-            return internalServerError.apply(request);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return internalServerError.apply(request);
+            StorageImageContainer preparation = storageService.preparation(request, file, group);
+            String beanName = storageProperties.getGroups().get(group).getBean();
+            AfterPreparationImageAction bean = (AfterPreparationImageAction) applicationContext.getBean(beanName);
+            return bean.doProcess(request, preparation);
         } catch (Exception e) {
             e.printStackTrace();
             return internalServerError.apply(request);
@@ -89,47 +79,9 @@ public class UploadController {
         return new ResponseEntity<String>("Internal Server Error", responseHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
     };
 
-    public static String getTemplate(String vueTemplate) {
-        vueTemplate = Arrays.stream(vueTemplate.split("\r\n")).map(line -> "\"".concat(line).concat("\" +\r\n "))
-                .collect(Collectors.joining( ));
-        return vueTemplate.substring(0, vueTemplate.lastIndexOf("+"));
-    }
 
-    public static <T> T getDto(InputStream inputStream, Class<T> dtoType)
-            throws IOException {
-        String s = IOUtils.toString(inputStream);
-        T t = jsonMapper.readValue(s, dtoType);
-        return t;
-    }
 
-    public static abstract class AfterSaveImageAction {
-        public BiFunction<HttpServletRequest, String, ResponseEntity> getField(String fieldName)
-                throws NoSuchFieldException, IllegalAccessException {
-            Field field = this.getClass().getField(fieldName);
-            return (BiFunction<HttpServletRequest, String, ResponseEntity>) field.get(this);
-        }
 
-        public Object getValueObject(String val) {
-            if(val.startsWith("i:")) {
-                return Integer.parseInt(val.substring(2));
-            } else if(val.startsWith("l:")) {
-                return Long.parseLong(val.substring(2));
-            } else if(val.startsWith("f:")) {
-                return Float.parseFloat(val.substring(2));
-            } else if(val.startsWith("d:")) {
-                return Double.parseDouble(val.substring(2));
-            } else if(val.startsWith("b:")) {
-                return Boolean.valueOf(val.substring(2));
-            } else {
-                return val;
-            }
-        }
-    }
-
-    public static enum AjaxReplaceType {
-        NO_RESULT,
-        ITS_ID
-    }
 
     @ExceptionHandler(StorageFileNotFoundException.class)
     public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {

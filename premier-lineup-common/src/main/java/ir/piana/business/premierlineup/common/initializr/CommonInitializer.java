@@ -38,8 +38,8 @@ public class CommonInitializer extends BaseInitializer {
 
     @Override
     public InputStream getSupportSql() {
-        return null;
-//        return CommonInitializer.class.getResourceAsStream("/common.sql");
+//        return null;
+        return CommonInitializer.class.getResourceAsStream("/common.sql");
     }
 
     @Override

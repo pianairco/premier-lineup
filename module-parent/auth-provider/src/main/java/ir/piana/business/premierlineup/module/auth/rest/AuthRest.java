@@ -148,29 +148,24 @@ public class AuthRest {
         if(CommonUtils.isNull(authentication.getPrincipal()) ||
                 !(authentication.getPrincipal() instanceof String &&
                 authentication.getPrincipal().toString().equalsIgnoreCase("anonymousUser"))) {
-            return ResponseEntity.ok(ResponseModel.builder().code(1)
-                    .data(loginFailed()).build());
+            return ResponseEntity.ok(ResponseModel.builder().code(1).build());
         }
 
         if(CommonUtils.isNull(confirmInfo) || CommonUtils.isNull(confirmInfo.getOtp()) ||
                 CommonUtils.isNull(confirmInfo.getUuid())) {
-            return ResponseEntity.ok(ResponseModel.builder().code(2)
-                    .data(loginFailed()).build());
+            return ResponseEntity.ok(ResponseModel.builder().code(2).build());
         }
 
         UserEntity userEntity = (UserEntity) pianaCacheService.getValue(confirmInfo.getUuid());
         if(CommonUtils.isNull(userEntity)) {
-            return ResponseEntity.ok(ResponseModel.builder().code(3)
-                    .data(loginFailed()).build());
+            return ResponseEntity.ok(ResponseModel.builder().code(3).build());
         }
 
         UserEntity byMobile = userRepository.findByMobile(userEntity.getMobile());
         if(!CommonUtils.isNull(byMobile))
-            return ResponseEntity.ok(ResponseModel.builder().code(4)
-                    .data(loginFailed()).build());
+            return ResponseEntity.ok(ResponseModel.builder().code(4).build());
         else if(!userEntity.getOtp().equalsIgnoreCase(confirmInfo.getOtp()))
-            return ResponseEntity.ok(ResponseModel.builder().code(5)
-                    .data(loginFailed()).build());
+            return ResponseEntity.ok(ResponseModel.builder().code(5).build());
 
         String rawPassword = userEntity.getPassword();
         userEntity.setPassword(passwordEncoder.encode(rawPassword));
@@ -181,10 +176,8 @@ public class AuthRest {
                         .roleName("ROLE_USER").build()));
         userRepository.save(userEntity);
 
-        return ResponseEntity.ok(ResponseModel.builder()
-                .code(0)
-                .data(this.loginComplete(saved, request, response))
-                .build());
+        this.loginComplete(saved, request, response);
+        return getAppInfo();
     }
 
     @PreAuthorize("!hasRole('ROLE_AUTHENTICATED')")
@@ -198,46 +191,35 @@ public class AuthRest {
         if(CommonUtils.isNull(authentication.getPrincipal()) ||
                 !(authentication.getPrincipal() instanceof String &&
                         authentication.getPrincipal().toString().equalsIgnoreCase("anonymousUser"))) {
-            return ResponseEntity.ok(ResponseModel.builder().code(1)
-                    .data(loginFailed()).build());
+            return ResponseEntity.ok(ResponseModel.builder().code(1).build());
         }
 
         if(CommonUtils.isNull(loginInfo) || CommonUtils.isNull(loginInfo.getMobile()) ||
                 CommonUtils.isNull(loginInfo.getPassword()) ||
                 CommonUtils.isNull(loginInfo.getCaptcha())) {
-            return ResponseEntity.ok(ResponseModel.builder().code(2)
-                    .data(loginFailed()).build());
+            return ResponseEntity.ok(ResponseModel.builder().code(2).build());
         }
 
         UserEntity byMobile = userRepository.findByMobile(loginInfo.getMobile());
         if(CommonUtils.isNull(byMobile))
-            return ResponseEntity.ok(ResponseModel.builder().code(3)
-                    .data(loginFailed()).build());
+            return ResponseEntity.ok(ResponseModel.builder().code(3).build());
 
         if(passwordEncoder.matches(loginInfo.getPassword(), byMobile.getPassword())) {
-            return ResponseEntity.ok(ResponseModel.builder()
-                    .code(0)
-                    .data(this.loginComplete(byMobile, request, response))
-                    .build());
-        } else {
-            return ResponseEntity.ok(ResponseModel.builder()
-                    .code(4)
-                    .data(this.loginFailed())
-                    .build());
+            this.loginComplete(byMobile, request, response);
         }
 
+        return getAppInfo();
     }
 
     @CrossOrigin
     @PostMapping(path = "app-info",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseModel> getAppInfo(
-            HttpServletRequest request, HttpSession session)
+    public ResponseEntity<ResponseModel> getAppInfo()
             throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         AppInfo appInfo = null;
-        if(authentication.getPrincipal() instanceof UserModel) {
+        if(authentication.isAuthenticated() && authentication.getPrincipal() instanceof UserModel) {
             UserEntity userEntity = ((UserModel) authentication.getPrincipal()).getUserEntity();
             appInfo = AppInfo.builder()
                     .isLoggedIn(true)
@@ -256,7 +238,7 @@ public class AuthRest {
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(appInfo).build());
     }
 
-    private AppInfo loginComplete(UserEntity userEntity, HttpServletRequest request, HttpServletResponse response) {
+    private void loginComplete(UserEntity userEntity, HttpServletRequest request, HttpServletResponse response) {
         List<GrantedAuthority> authorities = userEntity.getUserRolesEntities().stream()
                 .map(e -> new SimpleGrantedAuthority(e.getRoleName())).collect(Collectors.toList());
         authorities.add(new SimpleGrantedAuthority("ROLE_AUTHENTICATED"));
@@ -268,40 +250,17 @@ public class AuthRest {
                         authorities));
         SecurityContextHolder.getContext().setAuthentication(
                 authenticate);
-
-        AppInfo appInfo = AppInfo.builder()
-                    .isLoggedIn(true)
-                    .isAdmin(authorities.stream()
-                            .filter(e -> e.getAuthority().equalsIgnoreCase("ROLE_ADMIN"))
-                            .map(e -> true).findFirst().orElse(false))
-                    .username(userEntity.getUsername())
-                    .build();
-        return appInfo;
     }
 
-    private AppInfo loginFailed() {
-        AppInfo appInfo = AppInfo.builder()
-                .isLoggedIn(false)
-                .isAdmin(false)
-                .username("unknown")
-                .build();
-        return appInfo;
-    }
-
-    @PostMapping(path = "sign-out",
+    @PostMapping(path = "logout",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AppInfo> signOut(
+    public ResponseEntity<ResponseModel> signOut(
             @RequestBody Map map, HttpServletRequest request, HttpSession session) throws IOException {
         session.invalidate();
-//        SecurityContext sc = SecurityContextHolder.getContext();
-//        sc.setAuthentication(authenticate);
-        String host = (String) request.getAttribute("host");
-
-        return authAction.appInfo.apply(request, map);
-//        AppInfo appInfo = AppInfo.builder().isLoggedIn(false)
-//                .isAdmin(false).build();
-//        return ResponseEntity.ok(appInfo);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        authentication.setAuthenticated(false);
+        return getAppInfo();
     }
 
     /*@CrossOrigin

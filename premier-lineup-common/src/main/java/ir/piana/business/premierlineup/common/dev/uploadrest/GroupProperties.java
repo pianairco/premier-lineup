@@ -18,5 +18,6 @@ public class GroupProperties {
     private int height;
     private String afterSaveImageActivity;
     private String sql;
+    private String bean;
     private List<String> sqls;
 }

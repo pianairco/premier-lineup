@@ -16,21 +16,24 @@
             تنظیمات
           </a>
           <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" href="#">تنظیم آواتار</a></li>
+            <li><a class="dropdown-item" [routerLink]="'/root/setting/avatar'">تنظیم آواتار</a></li>
             <li><a class="dropdown-item" href="#">اطلاعات کاربری</a></li>
           </ul>
         </li>
       </ul>
-      <form class="d-flex">
+      <form class="d-flex" *ngIf="(this.authService.authSubject | async).isLoggedIn">
+        <a class="btn btn-outline-danger mx-1" (click)="authService.logout()">
+          <img class="topbar-avatar" src="assets/images/person/avatar-2.png">
+          <span class="mx-2">خروج</span>
+        </a>
+      </form>
+      <form class="d-flex" *ngIf="!(this.authService.authSubject | async).isLoggedIn">
         <a class="btn btn-outline-success mx-1"
            [routerLink]="'/auth/login'"
            type="button">ورود به سیستم</a>
         <a class="btn btn-outline-warning mx-1"
            [routerLink]="'/auth/sign-in'"
            type="button">ثبت نام</a>
-        <a class="btn btn-outline-warning mx-1"
-           (click)="showMessage()"
-           type="button">پیام</a>
       </form>
     </div>
   </div>

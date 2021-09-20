@@ -1,4 +1,2 @@
 https://stackoverflow.com/questions/68775869/support-for-password-authentication-was-removed-please-use-a-personal-access-to
 git remote set-url origin https://<token>@github.com/<username>/<repo>
-
-git remote set-url origin https://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@github.com/pianairco/piana-isms

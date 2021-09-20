@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 
 @Service("fileSystemStorageService")
 @Profile("production")
-public class FileSystemStorageService implements StorageService {
+public class FileSystemStorageService extends StorageService {
     private final Path rootLocation;
 
     StorageProperties storageProperties;
@@ -152,50 +152,6 @@ public class FileSystemStorageService implements StorageService {
         catch (IOException e) {
             throw new StorageException("Failed to store file!", e);
         }
-    }
-
-    public static BufferedImage rotateImageByDegrees(BufferedImage img, int type, double angle) {
-
-        double rads = Math.toRadians(angle);
-        double sin = Math.abs(Math.sin(rads)), cos = Math.abs(Math.cos(rads));
-        int w = img.getWidth();
-        int h = img.getHeight();
-        int newWidth = (int) Math.floor(w * cos + h * sin);
-        int newHeight = (int) Math.floor(h * cos + w * sin);
-
-        BufferedImage rotated = new BufferedImage(newWidth, newHeight, type);
-        Graphics2D g2d = rotated.createGraphics();
-        AffineTransform at = new AffineTransform();
-        at.translate((newWidth - w) / 2, (newHeight - h) / 2);
-
-        int x = w / 2;
-        int y = h / 2;
-
-        at.rotate(rads, x, y);
-        g2d.setTransform(at);
-        g2d.drawImage(img, 0, 0, null);
-        g2d.dispose();
-
-        return rotated;
-    }
-
-    private static BufferedImage manipulateImage(
-            BufferedImage originalImage, int type,
-            Integer rotation, Integer img_width, Integer img_height)
-    {
-        BufferedImage resizedImage = new BufferedImage(img_width, img_height, type);
-        Graphics2D g = resizedImage.createGraphics();
-        g.drawImage(originalImage, 0, 0, img_width, img_height, null);
-        g.dispose();
-
-//        Graphics2D g2r = resizedImage.createGraphics();
-//        AffineTransform identity = new AffineTransform();
-//        AffineTransform trans = new AffineTransform();
-//        trans.setTransform(identity);
-//        trans.rotate(Math.toRadians(rotation));
-//        g2r.drawImage(resizedImage, trans, null);
-
-        return rotateImageByDegrees(resizedImage, type, rotation);
     }
 
     @Override

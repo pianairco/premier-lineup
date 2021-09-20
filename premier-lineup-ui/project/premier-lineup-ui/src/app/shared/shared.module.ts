@@ -5,6 +5,7 @@ import {TranslateModule} from "@ngx-translate/core";
 import {MaterialModule} from "@lineup-app/shared/module/material.module";
 import {AngularResizedEventModule} from "angular-resize-event";
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+// import {MatFileUploadModule} from "mat-file-upload";
 
 @NgModule({
   declarations: [],
@@ -13,6 +14,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     RouterModule,
     MaterialModule,
     AngularResizedEventModule,
+    // MatFileUploadModule,
   ],
   exports: [
     // vendor
@@ -23,6 +25,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     MaterialModule,
     AngularResizedEventModule,
     TranslateModule,
+    // MatFileUploadModule,
   ]
 })
 export class SharedModule { }

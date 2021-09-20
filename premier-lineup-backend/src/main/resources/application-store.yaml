@@ -2,6 +2,10 @@ storage:
   location: c:/upload-dir
   bean: afterSaveImage
   groups:
+    avatar:
+      width: 256
+      height: 256
+      bean: avatarService
     product:
       folder: /assets/product
       width: 640
