@@ -4,6 +4,7 @@ import {MatExpansionPanel} from "@angular/material/expansion";
 import {BehaviorSubject} from "rxjs";
 import axios from "axios";
 import {ConstantService} from "@lineup-app/core/service/constant.service";
+import {AuthenticationService} from "@lineup-app/core/service/authentication-service.service";
 
 @Component({
   selector: 'app-avatar',
@@ -17,7 +18,8 @@ export class AvatarComponent implements OnInit {
   filePath: string = null;
   imgBase64Path = null;
 
-  constructor(private constantService: ConstantService) {
+  constructor(private constantService: ConstantService,
+              public authService: AuthenticationService) {
   }
 
   onFileChange(e: any) {
@@ -53,20 +55,10 @@ export class AvatarComponent implements OnInit {
   rotate = 0;
 
   upload() {
-    let formData = new FormData();
-    formData.append('file', this.imgBase64Path);
-    let headers = {
-      'image_upload_group': 'avatar',
-      'image-upload-rotation': this.rotate,
-      'Content-Type': 'multipart/form-data'
-    };
-
-    axios.post(this.constantService.getRemoteServer() + 'api/upload-manager/serve', formData, {
-      headers: headers
-    }).then((res) => {
-      console.log(res['data']['code'], res['data']['data']);
-    }).catch((e) => {
-      console.log(e.response);
+    this.authService.setAvatar(this.imgBase64Path, this.rotate).then(res => {
+      if(res) {
+        this.clearImage();
+      }
     });
   }
 

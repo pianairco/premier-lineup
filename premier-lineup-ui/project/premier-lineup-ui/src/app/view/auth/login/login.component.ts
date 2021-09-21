@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {FormBuilder, FormControl} from '@angular/forms';
 import {AjaxCallService} from '@lineup-app/core/service/ajax-call.service';
@@ -16,7 +16,7 @@ import {AlertComponent} from "@lineup-app/core/component/alert/alert.component";
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, AfterViewInit {
 
   showModal: boolean = true;
   hide = true;
@@ -41,6 +41,7 @@ export class LoginComponent implements OnInit {
   // @ts-ignore
   returnUrl: string;
   subDomain = null;
+  @ViewChild('loginBtn', { read: ElementRef }) loginBtn: ElementRef;
 
   constructor(
     private builder: FormBuilder,
@@ -67,6 +68,12 @@ export class LoginComponent implements OnInit {
 
   toJsonString(obj) {
     return JSON.stringify(obj);
+  }
+
+  ngAfterViewInit(): void {
+    console.log(this.loginBtn.nativeElement)
+    this.loginBtn.nativeElement.focus()
+    // setTimeout(() => this.loginBtn.nativeElement.focus(), 1000);
   }
 
   ngOnInit(): void {

@@ -1,4 +1,4 @@
-CREATE TABLE MENU (
+CREATE TABLE IF NOT EXISTS MENU (
                       ID number(18) primary key,
                       PARENT_ID number(18),
                       TITLE varchar(128) not null,
@@ -16,11 +16,3 @@ insert into MENU select * from (
     select 3, null, 'سهم و اوراق', 'portfolio-bond' FROM DUAL union
     select 300, 3, 'محاسبه دارایی سهام', 'portfolio-calc' FROM DUAL
 ) where not exists(select * from MENU);
-
-/*CREATE TABLE FUND_MENU (
-    ID number(18) primary key,
-    APP_ID number(25),
-    MENU_ID number(18) not null,
-    constraint FK_FUND_MENU_2_FUND  foreign key (APP_ID) references APP (APP_ID),
-    constraint FK_FUND_MENU_2_MENU foreign key (MENU_ID) references MENU (ID)
-);*/

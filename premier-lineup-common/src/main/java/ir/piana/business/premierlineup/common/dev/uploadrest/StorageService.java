@@ -16,6 +16,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Base64;
 import java.util.stream.Stream;
 
 public abstract class StorageService {
@@ -24,6 +25,51 @@ public abstract class StorageService {
     public abstract void init();
 
     public abstract GroupProperties getGroupProperties(String group);
+
+    public StorageImageContainer preparation(HttpServletRequest request, String base64file, String group) {
+        int width = storageProperties.getGroups().get(group).getWidth();
+        int height = storageProperties.getGroups().get(group).getHeight();
+        String rotateString = request.getHeader("image-upload-rotation");
+        int rotation = 0;
+        if(!CommonUtils.isNull(rotateString)) {
+            rotation = Integer.parseInt(rotateString);
+        }
+
+        String format = base64file.substring(0, base64file.indexOf(";")).split(":")[1].split("/")[1];
+        String filename = RandomStringUtils.randomAlphanumeric(64).concat(".").concat(format);
+
+        String file = base64file.substring(base64file.indexOf(";") + "base64,".length() + 1);
+        try {
+            if (file.isEmpty()) {
+                throw new StorageException("Failed to store empty file " + filename);
+            }
+            if (filename.contains("..")) {
+                // This is a security check
+                throw new StorageException(
+                        "Cannot store file with relative path outside current directory "
+                                + filename);
+            }
+            try (InputStream inputStream = new ByteArrayInputStream(Base64.getDecoder().decode(file))) {
+                BufferedImage originalImage = ImageIO.read(inputStream);
+//                    BufferedImage scaledImg = Scalr.resize(
+//                            originalImage, Scalr.Method.ULTRA_QUALITY, Scalr.Mode.FIT_TO_WIDTH, 2000, 750);
+                int type = originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB
+                        : originalImage.getType();
+
+                BufferedImage scaledImg = manipulateImage(originalImage, type, rotation, width, height);
+//                    ImageIO.write(scaledImg, format, new File(filePath));
+
+                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                ImageIO.write(scaledImg, format, os);
+                // Passing: ​(RenderedImage im, String formatName, OutputStream output)
+
+                return StorageImageContainer.builder().file(os.toByteArray()).filename(filename).format(format).build();
+            }
+        }
+        catch (IOException e) {
+            throw new StorageException("Failed to store file " + filename, e);
+        }
+    }
 
     public StorageImageContainer preparation(HttpServletRequest request, MultipartFile file, String group) {
         int width = storageProperties.getGroups().get(group).getWidth();

@@ -38,7 +38,8 @@ public abstract class BaseInitializer {
         try (InputStream resourceAsStream = getSupportSql()) {
             if(resourceAsStream != null) {
                 String[] split = new String[0];
-                split = IOUtils.toString(resourceAsStream).split(";");
+                String scripts = IOUtils.toString(resourceAsStream);
+                split = scripts.split(";");
 
                 for (String script : split) {
                     queryExecutorProvider.executeOnSupport(script);

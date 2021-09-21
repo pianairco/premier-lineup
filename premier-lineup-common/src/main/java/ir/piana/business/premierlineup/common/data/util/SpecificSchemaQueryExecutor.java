@@ -203,7 +203,10 @@ public class SpecificSchemaQueryExecutor {
             QueryRunner runner = new QueryRunner();
             int execute = runner.execute(conn, query, sqlParams);
             return execute > 0;
-        } finally {
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }finally {
             ds.evictConnection(conn);
         }
     }

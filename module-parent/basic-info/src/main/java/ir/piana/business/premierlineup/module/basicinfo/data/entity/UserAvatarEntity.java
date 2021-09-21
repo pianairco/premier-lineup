@@ -22,6 +22,10 @@ public class UserAvatarEntity {
     private long userId;
     @Column(name = "path")
     private String path;
+    @Column(name = "format")
+    private String format;
+    @Column(name = "be_deleted")
+    private boolean beDeleted;
     @Column(name = "image_data")
     @Lob
     private byte[] imageData;

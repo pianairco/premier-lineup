@@ -24,13 +24,23 @@ export class AuthenticationService {
   uuid = null;
   private _authSubject: any;
   private _appInfo: AppInfo = null;
+  private _avatar = 'api/basic-info/avatar';
+  private _avatarSubject: BehaviorSubject<string> = new BehaviorSubject<string>(this._avatar);
 
   private _uuid: string = null;
 
-  setAppInfo(appInfo: AppInfo) {
+  private setAppInfo(appInfo: AppInfo) {
     this._appInfo = appInfo;
     console.log(this._appInfo)
     this._authSubject.next(this._appInfo)
+  }
+
+  private newAvatar() {
+    this._avatarSubject.next(this._avatar + '?time=' + new Date().getMilliseconds());
+  }
+
+  public $avatar(): Observable<string> {
+    return this._avatarSubject.asObservable();
   }
 
   constructor(
@@ -179,7 +189,7 @@ export class AuthenticationService {
         { headers: { 'Content-Type': 'APPLICATION/JSON; charset=utf-8' } });
       console.log(res);
       if(res['data']['code'] === 0) {
-        this.setAppInfo(res['data']);
+        this.setAppInfo(res['data']['data']);
         return true;
       } else {
         return false;
@@ -196,9 +206,9 @@ export class AuthenticationService {
       let res = await axios.post(this.constantService.getRemoteServer() + '/api/auth/login',
         loginInfo,
         { headers: { 'Content-Type': 'APPLICATION/JSON' } });
-      console.log('111', res);
       if(res['data']['code'] == 0) {
         this.setAppInfo(res['data']['data']);
+        this.newAvatar();
         return true;
       } else {
         this.notificationService.changeMessage("error", "not work")
@@ -240,9 +250,10 @@ export class AuthenticationService {
       if(!this._appInfo.isLoggedIn)
         return;
       let res = await axios.post(this.constantService.getRemoteServer() + 'api/auth/logout', {headers: {}});
-      console.log(res);
       if(res.status == 200 && res['data']['code'] == 0) {
+        console.log("logout success");
         this.setAppInfo(res['data']['data']);
+        this.newAvatar();
         this.generalStateService.title = '';
         // this.setAppInfo(new AppInfo(null, null, null, false, false));
         // this.pianaStorageService.putObject('appInfo', res['data']);
@@ -251,6 +262,37 @@ export class AuthenticationService {
     } catch (err) {
       // this.timeStamp = this.timeStamp + 1;
       throw err;
+    }
+  }
+
+  async setAvatar(imageBase64: string, rotate: number) {
+    /*let formData = new FormData();
+    formData.append('file', this.imgBase64Path);
+    let headers = {
+      'image_upload_group': 'avatar',
+      'image-upload-rotation': this.rotate,
+      'Content-Type': 'multipart/form-data; boundary {}',
+      'enctype': 'multipart/form-data'
+    };*/
+    try {
+      let headers = {
+        'image_upload_group': 'avatar',
+        'image-upload-rotation': rotate,
+        'Content-Type': 'application/json'
+      };
+
+      let res = await axios.post(this.constantService.getRemoteServer() + 'api/upload-manager/serve', {file: imageBase64}, {
+        headers: headers
+      });
+
+      if (res['status'] == 200 && res['data']['code'] == 0) {
+        this.newAvatar();
+        return true;
+      } else {
+        return false;
+      }
+    } catch (err) {
+      return false;
     }
   }
 }

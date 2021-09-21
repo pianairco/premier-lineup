@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -47,14 +48,19 @@ public class UploadManager {
     private static ObjectMapper jsonMapper = new ObjectMapper();
 
     @RequestMapping(value = "/serve", method = RequestMethod.POST,
-            consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
+            consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = "application/json; charset=utf8")
     public @ResponseBody
     ResponseEntity upload(HttpServletRequest request,
                           @RequestHeader("image_upload_group") String group,
-                          @RequestParam("file") MultipartFile file) {
+                          /*@RequestBody FormDataWrapper formDataWrapper*/
+                          @RequestBody Map<String, String> body
+                          /*@RequestPart("file") MultipartFile file*/) {
         try {
-            StorageImageContainer preparation = storageService.preparation(request, file, group);
+//            MultipartFile file = (MultipartFile) null;
+//            MultipartFile file = (MultipartFile) formDataWrapper.file;
+
+            StorageImageContainer preparation = storageService.preparation(request, body.get("file"), group);
             String beanName = storageProperties.getGroups().get(group).getBean();
             AfterPreparationImageAction bean = (AfterPreparationImageAction) applicationContext.getBean(beanName);
             return bean.doProcess(request, preparation);
@@ -79,9 +85,9 @@ public class UploadManager {
         return new ResponseEntity<String>("Internal Server Error", responseHeaders, HttpStatus.INTERNAL_SERVER_ERROR);
     };
 
-
-
-
+    public static class FormDataWrapper {
+        String file;
+    }
 
     @ExceptionHandler(StorageFileNotFoundException.class)
     public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {

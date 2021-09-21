@@ -4,7 +4,8 @@
       <div class="col col-sm-12 col-md-6 col-lg-4 d-flex aligns-items-center justify-content-center">
         <div class="card" style="width: 18rem;">
           <img *ngIf="filePath" [src]="filePath" class="card-img-top" style="min-width: 286px; min-height: 286px;" >
-          <img *ngIf="!filePath" src="./assets/images/common/select.png" class="card-img-top img-thumbnail" >
+          <img *ngIf="!filePath" [src]="authService.$avatar() | async" class="card-img-top img-thumbnail" >
+<!--          <img *ngIf="!filePath" src="./assets/images/common/select.png" class="card-img-top img-thumbnail" >-->
           <div class="card-body">
             <input type="file" #uploadControl id="fileControlInput" (change)="onFileChange($event)"
                    name="fileControlInput" accept="image/*" />

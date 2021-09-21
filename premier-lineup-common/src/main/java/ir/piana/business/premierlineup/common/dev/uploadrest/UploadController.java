@@ -2,7 +2,6 @@ package ir.piana.business.premierlineup.common.dev.uploadrest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.piana.business.premierlineup.common.dev.sqlrest.SqlQueryService;
-import ir.piana.business.premierlineup.common.model.ResponseModel;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

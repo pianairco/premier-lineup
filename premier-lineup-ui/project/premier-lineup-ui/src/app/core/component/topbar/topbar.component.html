@@ -23,7 +23,7 @@
       </ul>
       <form class="d-flex" *ngIf="(this.authService.authSubject | async).isLoggedIn">
         <a class="btn btn-outline-danger mx-1" (click)="authService.logout()">
-          <img class="topbar-avatar" src="assets/images/person/avatar-2.png">
+          <img class="topbar-avatar" [src]="authService.$avatar() | async">
           <span class="mx-2">خروج</span>
         </a>
       </form>

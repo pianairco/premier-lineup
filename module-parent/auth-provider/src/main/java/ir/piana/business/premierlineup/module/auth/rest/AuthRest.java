@@ -194,9 +194,7 @@ public class AuthRest {
             return ResponseEntity.ok(ResponseModel.builder().code(1).build());
         }
 
-        if(CommonUtils.isNull(loginInfo) || CommonUtils.isNull(loginInfo.getMobile()) ||
-                CommonUtils.isNull(loginInfo.getPassword()) ||
-                CommonUtils.isNull(loginInfo.getCaptcha())) {
+        if(CommonUtils.isNull(loginInfo) || CommonUtils.isNull(loginInfo.getMobile())) {
             return ResponseEntity.ok(ResponseModel.builder().code(2).build());
         }
 
@@ -204,8 +202,21 @@ public class AuthRest {
         if(CommonUtils.isNull(byMobile))
             return ResponseEntity.ok(ResponseModel.builder().code(3).build());
 
-        if(passwordEncoder.matches(loginInfo.getPassword(), byMobile.getPassword())) {
+        if(Arrays.stream(env.getActiveProfiles()).anyMatch(p -> "develop".matches(p))) {
             this.loginComplete(byMobile, request, response);
+        } else {
+            if(CommonUtils.isNull(loginInfo.getPassword()) ||
+                    CommonUtils.isNull(loginInfo.getCaptcha())) {
+                return ResponseEntity.ok(ResponseModel.builder().code(4).build());
+            } else {
+                Captcha sessionCaptcha = (Captcha)request.getSession().getAttribute("simpleCaptcha");
+                if(!CommonUtils.isNull(loginInfo.getCaptcha()) || sessionCaptcha.isCorrect(loginInfo.getCaptcha()))
+                    return ResponseEntity.ok(ResponseModel.builder().code(5).build());
+                if(!passwordEncoder.matches(loginInfo.getPassword(), byMobile.getPassword())) {
+                    return ResponseEntity.ok(ResponseModel.builder().code(6).build());
+                }
+                this.loginComplete(byMobile, request, response);
+            }
         }
 
         return getAppInfo();
@@ -232,7 +243,7 @@ public class AuthRest {
             appInfo = AppInfo.builder()
                     .isLoggedIn(false)
                     .isAdmin(false)
-                    .username(authentication.getName())
+                    .username("unknown")
                     .build();
         }
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(appInfo).build());

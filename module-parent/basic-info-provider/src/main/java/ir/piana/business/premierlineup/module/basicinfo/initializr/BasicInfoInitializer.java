@@ -25,7 +25,7 @@ public class BasicInfoInitializer extends BaseInitializer {
 
     @Override
     public InputStream getSupportSql() {
-        return BasicInfoInitializer.class.getResourceAsStream("/data.sql");
+        return BasicInfoInitializer.class.getResourceAsStream("/basic-info.sql");
     }
 
     @Override
