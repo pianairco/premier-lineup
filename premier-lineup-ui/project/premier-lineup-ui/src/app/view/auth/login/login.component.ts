@@ -145,7 +145,7 @@ export class LoginComponent implements OnInit, AfterViewInit {
     promise.then(res => {
       if (res == true) {
         console.log("res is true")
-        this.router.navigate(['/root/home']);
+        // this.router.navigate(['/root/home']);
       } else {
         // this._snackBar.open("throw exception", "close", {
         //   horizontalPosition: 'end',
