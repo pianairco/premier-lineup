@@ -6,7 +6,7 @@ import {ConstantService} from "./constant.service";
 import {BehaviorSubject, Observable} from "rxjs";
 import {EditModeObject} from "./share-state.service";
 import {GeneralStateService} from "./general-state.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {AlertComponent} from "@lineup-app/core/component/alert/alert.component";
 import {NotificationService} from "@lineup-app/core/service/notification.service";
@@ -24,7 +24,7 @@ export class AuthenticationService {
   uuid = null;
   private _authSubject: any;
   private _appInfo: AppInfo = null;
-  private _avatar = 'api/basic-info/avatar';
+  private _avatar = 'api/modules/basic-info/avatar';
   private _avatarSubject: BehaviorSubject<string> = new BehaviorSubject<string>(this._avatar);
 
   private _uuid: string = null;
@@ -44,6 +44,8 @@ export class AuthenticationService {
   }
 
   constructor(
+    private route: ActivatedRoute,
+    private router: Router,
     /*private authService: SocialAuthService,*/
     private notificationService: NotificationService,
     private constantService: ConstantService,
@@ -70,101 +72,24 @@ export class AuthenticationService {
 
   async initialToSignIn() {
     try {
-      let res = await axios.post('api/sign-in/sub-domain', {}, {headers: {"content-type": "application/json"}});
+      /*let res = await axios.post('api/sign-in/sub-domain', {}, {headers: {"content-type": "application/json"}});
       this.uuid = res.data['uuid'];
-      return res.data['redirect'];
+      return res.data['redirect'];*/
     } catch(err) {
       console.log(err)
     }
   }
 
   async getAppInfo() {
-    let res = await axios.post('api/auth/app-info', {}, {headers: {}});
+    let res = await axios.post('api/modules/auth/app-info', {}, {headers: {}});
     if (res.status === 200 && res['data']['code'] == 0) {
       this.setAppInfo(res['data']['data']);
     }
   }
 
-/*  getSiteInfo(siteInfo): Promise<SiteInfo> {
-    return new Promise((resolve, reject) => {
-      axios.put('/api/modules/site/info', siteInfo, {headers: {}}).then(
-        res => {
-          if (res.status === 200) {
-            // this._appInfo.siteInfo.title = res['data']['data']['title'];
-            // this._appInfo.siteInfo.description = res['data']['data']['description'];
-            // this.setAppInfo(this._appInfo);
-          }
-        }, err => {
-        }
-      );
-
-    });
-  }*/
-
-  async updateSiteInfoTip(siteInfo) {
-    let res = await axios.put('/api/modules/site/site-info/tip', {
-      'tipTitle': siteInfo.tipTitle,
-      'tipDescription': siteInfo.tipDescription
-    }, {headers: {}});
-    if (res.status === 200) {
-      this._appInfo.siteInfo.tipTitle = res['data']['data']['tipTitle'];
-      this._appInfo.siteInfo.tipDescription = res['data']['data']['tipDescription'];
-      this.setAppInfo(this._appInfo);
-      // console.log(appInfo);
-      // console.log(JSON.stringify(appInfo));
-      // console.log(localStorage.getItem('appInfo'));
-
-      // this.pianaStorageService.putObject('appInfo', this.appInfo);
-      // localStorage.setItem('currentUser', JSON.stringify(appInfo))
-      // console.log(this.pianaStorageService.getObject('appInfo')['username'])
-      // console.log(this.pianaStorageService.getFieldValue('appInfo', 'username'))
-      // console.log(JSON.parse(localStorage.getItem('appInfo'))['username'])
-    }
-  }
-
-  async updateSiteInfoHeaderText(siteInfo) {
-    let res = await axios.put('/api/modules/site/site-info/header-text', {
-      'title': siteInfo.title,
-      'description': siteInfo.description
-    }, {headers: {}});
-    if (res.status === 200) {
-      this._appInfo.siteInfo.title = res['data']['data']['title'];
-      this._appInfo.siteInfo.description = res['data']['data']['description'];
-      this.setAppInfo(this._appInfo);
-      // console.log(appInfo);
-      // console.log(JSON.stringify(appInfo));
-      // console.log(localStorage.getItem('appInfo'));
-
-      // this.pianaStorageService.putObject('appInfo', this.appInfo);
-      // localStorage.setItem('currentUser', JSON.stringify(appInfo))
-      // console.log(this.pianaStorageService.getObject('appInfo')['username'])
-      // console.log(this.pianaStorageService.getFieldValue('appInfo', 'username'))
-      // console.log(JSON.parse(localStorage.getItem('appInfo'))['username'])
-    }
-  }
-
-  async updateSiteInfoHeaderImage(image) {
-    let res = await axios.put('/api/modules/site/site-info/header-image', {
-      'headerImage': image
-    }, {headers: {}});
-    if (res.status === 200) {
-      this._appInfo.siteInfo.headerImage = res['data']['data']['headerImage'];
-      this.setAppInfo(this._appInfo);
-      // console.log(appInfo);
-      // console.log(JSON.stringify(appInfo));
-      // console.log(localStorage.getItem('appInfo'));
-
-      // this.pianaStorageService.putObject('appInfo', this.appInfo);
-      // localStorage.setItem('currentUser', JSON.stringify(appInfo))
-      // console.log(this.pianaStorageService.getObject('appInfo')['username'])
-      // console.log(this.pianaStorageService.getFieldValue('appInfo', 'username'))
-      // console.log(JSON.parse(localStorage.getItem('appInfo'))['username'])
-    }
-  }
-
   async requestOtp(loginInfo) {
     try {
-      let res = await axios.post(this.constantService.getRemoteServer() + '/api/auth/request-otp',
+      let res = await axios.post(this.constantService.getRemoteServer() + '/api/modules/auth/request-otp',
         loginInfo,
         { headers: { 'Content-Type': 'APPLICATION/JSON; charset=utf-8' } });
       // console.log(res);
@@ -184,7 +109,7 @@ export class AuthenticationService {
 
   async confirmOtp(otp) {
     try {
-      let res = await axios.post(this.constantService.getRemoteServer() + '/api/auth/confirm-otp',
+      let res = await axios.post(this.constantService.getRemoteServer() + '/api/modules/auth/confirm-otp',
         { type: 'otp', uuid: this._uuid, otp: otp },
         { headers: { 'Content-Type': 'APPLICATION/JSON; charset=utf-8' } });
       console.log(res);
@@ -203,12 +128,16 @@ export class AuthenticationService {
 
   async login(loginInfo) {
     try {
-      let res = await axios.post(this.constantService.getRemoteServer() + '/api/auth/login',
+      let returnUrl = this.route.snapshot.queryParamMap.get("returnUrl");
+      let res = await axios.post(this.constantService.getRemoteServer() + '/api/modules/auth/login',
         loginInfo,
         { headers: { 'Content-Type': 'APPLICATION/JSON' } });
       if(res['data']['code'] == 0) {
         this.setAppInfo(res['data']['data']);
         this.newAvatar();
+        if(returnUrl) {
+          this.router.navigate([returnUrl]);
+        }
         return true;
       } else {
         this.notificationService.changeMessage("error", "not work")
@@ -249,11 +178,12 @@ export class AuthenticationService {
       // let appInfo = this.pianaStorageService.getObject('appInfo');
       if(!this._appInfo.isLoggedIn)
         return;
-      let res = await axios.post(this.constantService.getRemoteServer() + 'api/auth/logout', {headers: {}});
+      let res = await axios.post(this.constantService.getRemoteServer() + 'api/modules/auth/logout', {headers: {}});
       if(res.status == 200 && res['data']['code'] == 0) {
         console.log("logout success");
         this.setAppInfo(res['data']['data']);
         this.newAvatar();
+        this.router.navigate([this.route.snapshot['_routerState'].url]);
         this.generalStateService.title = '';
         // this.setAppInfo(new AppInfo(null, null, null, false, false));
         // this.pianaStorageService.putObject('appInfo', res['data']);

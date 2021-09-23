@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController("avatarService")
-@RequestMapping("/api/basic-info/avatar")
+@RequestMapping("/api/modules/basic-info/avatar")
 public class AvatarRest implements AfterPreparationImageAction {
     @Autowired
     private UserAvatarRepository userAvatarRepository;
@@ -82,7 +82,7 @@ public class AvatarRest implements AfterPreparationImageAction {
             long userId = ((UserModel) authentication.getPrincipal()).getUserEntity().getId();
             Optional<UserAvatarEntity> byUserId = userAvatarRepository.findActiveAvatar(userId);
             if (byUserId.isPresent()) {
-                request.getSession().setAttribute("avatar", byUserId);
+                request.getSession().setAttribute("avatar", byUserId.get());
                 response.setContentType("image/png");
                 return byUserId.get().getImageData();
             }

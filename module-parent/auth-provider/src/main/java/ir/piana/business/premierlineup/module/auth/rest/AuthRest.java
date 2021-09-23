@@ -41,7 +41,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/modules/auth")
 public class AuthRest {
     @Autowired
     private AuthAction authAction;

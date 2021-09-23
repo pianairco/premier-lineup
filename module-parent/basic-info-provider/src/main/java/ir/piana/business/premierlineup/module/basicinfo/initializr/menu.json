@@ -2,13 +2,13 @@
   {
     "id": 5,
     "parent_id": null,
-    "title": "اطلاعات پایه",
-    "link": "basic-info"
+    "title": "حساب کاربری",
+    "link": "root/authenticated/setting"
   },
   {
     "id": 500,
     "parent_id": 5,
-    "title": "سرمایه گذار جدید",
-    "link": "common-form:CreateCustomer"
+    "title": "تنظیم آواتار",
+    "link": "avatar"
   }
 ]

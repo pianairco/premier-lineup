@@ -11,15 +11,25 @@
         <li class="nav-item">
           <a class="nav-link active" aria-current="page" href="#">خانه</a>
         </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            تنظیمات
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <li><a class="dropdown-item" [routerLink]="'/root/setting/avatar'">تنظیم آواتار</a></li>
-            <li><a class="dropdown-item" href="#">اطلاعات کاربری</a></li>
-          </ul>
-        </li>
+        <ng-container *ngFor="let m of (menuService.menuSubject | async)">
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle"
+               href="#"
+               id="navbar-{{m.id}}"
+               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              {{m.title}}
+            </a>
+            <ul class="dropdown-menu" [attr.aria-labelledby]="'navbar-' + m.id">
+              <ng-container *ngFor="let s of m.children">
+                <li>
+                  <a class="dropdown-item"
+                     [routerLink]="['/' + s.link]"
+                     routerLinkActive="menu-active-link">{{s.title}}</a>
+                </li>
+              </ng-container>
+            </ul>
+          </li>
+        </ng-container>
       </ul>
       <form class="d-flex" *ngIf="(this.authService.authSubject | async).isLoggedIn">
         <a class="btn btn-outline-danger mx-1" (click)="authService.logout()">
