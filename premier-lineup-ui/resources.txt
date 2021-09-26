@@ -1,5 +1,5 @@
 // ng commands
-ng generate module auth --route auth --module app.module
+ng generate module view/group --route group --module app.module
 
 
 // web resources

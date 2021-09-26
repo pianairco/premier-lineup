@@ -12,10 +12,12 @@ const routes: Routes = [
       { path: 'authenticated', canActivate: [ LoginGuard ], runGuardsAndResolvers: 'always', children: [
           { path: 'lineup', loadChildren: () => import('./view/lineup/lineup.module').then(m => m.LineupModule) },
           { path: 'setting', loadChildren: () => import('./view/setting/setting.module').then(m => m.SettingModule) },
+          { path: 'group', loadChildren: () => import('./view/group/group.module').then(m => m.GroupModule) },
         ]
       }
     ]
   },
+  { path: 'group', loadChildren: () => import('./view/group/group.module').then(m => m.GroupModule) },
 ];
 
 @NgModule({

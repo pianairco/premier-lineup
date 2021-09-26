@@ -21,6 +21,7 @@ public class MenuModel {
     private String icon;
     private String active;
     private String link;
+    private List<String> roles;
     private List<MenuModel> children;
 
 //    public void addSubMenu(MenuModel menuModel) {

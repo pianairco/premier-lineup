@@ -10,6 +10,7 @@ import {ActivatedRoute, Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material/snack-bar";
 import {AlertComponent} from "@lineup-app/core/component/alert/alert.component";
 import {NotificationService} from "@lineup-app/core/service/notification.service";
+import {MenuService} from "@lineup-app/core/service/menu-service.service";
 // import {GoogleLoginProvider, SocialAuthService} from "angularx-social-login";
 
 const googleLoginOptions = {
@@ -50,6 +51,7 @@ export class AuthenticationService {
     private notificationService: NotificationService,
     private constantService: ConstantService,
     private loadingService: LoadingService,
+    private menuService: MenuService,
     private generalStateService: GeneralStateService,
     private pianaStorageService: PianaStorageService,
     private _snackBar: MatSnackBar) {
@@ -115,6 +117,7 @@ export class AuthenticationService {
       console.log(res);
       if(res['data']['code'] === 0) {
         this.setAppInfo(res['data']['data']);
+        await this.menuService.getMenu();
         return true;
       } else {
         return false;
@@ -135,8 +138,11 @@ export class AuthenticationService {
       if(res['data']['code'] == 0) {
         this.setAppInfo(res['data']['data']);
         this.newAvatar();
+        await this.menuService.getMenu();
         if(returnUrl) {
-          this.router.navigate([returnUrl]);
+          this.router.navigate([atob(returnUrl)]);
+        } else {
+          this.router.navigate(['/root/home']);
         }
         return true;
       } else {
@@ -183,6 +189,7 @@ export class AuthenticationService {
         console.log("logout success");
         this.setAppInfo(res['data']['data']);
         this.newAvatar();
+        await this.menuService.getMenu();
         this.router.navigate([this.route.snapshot['_routerState'].url]);
         this.generalStateService.title = '';
         // this.setAppInfo(new AppInfo(null, null, null, false, false));

@@ -1,0 +1,29 @@
+[
+  {
+    "id": 6,
+    "parent_id": null,
+    "title": "مدیریت گروه ها",
+    "link": "root/authenticated/group",
+    "roles": [
+      "authenticated"
+    ]
+  },
+  {
+    "id": 600,
+    "parent_id": 6,
+    "title": "گروه جدید",
+    "link": "create"
+  },
+  {
+    "id": 601,
+    "parent_id": 6,
+    "title": "گروه های تحت مدیریت",
+    "link": "admin-groups"
+  },
+  {
+    "id": 602,
+    "parent_id": 6,
+    "title": "گروه های عضو",
+    "link": "member-groups"
+  }
+]

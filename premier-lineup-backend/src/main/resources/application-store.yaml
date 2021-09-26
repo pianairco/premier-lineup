@@ -6,6 +6,10 @@ storage:
       width: 256
       height: 256
       bean: avatarService
+    group-image:
+      width: 256
+      height: 256
+      bean: groupImageService
     product:
       folder: /assets/product
       width: 640

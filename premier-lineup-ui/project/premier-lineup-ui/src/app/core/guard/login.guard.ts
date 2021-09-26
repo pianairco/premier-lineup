@@ -28,7 +28,7 @@ export class LoginGuard implements CanActivate {
     if (isLoggedIn === true) {
        return true;
     } else {
-       this.router.navigate(['/auth/login'], { queryParams: { returnUrl: state.url }});
+       this.router.navigate(['/auth/login'], { queryParams: { returnUrl: btoa(state.url) }});
        return false;
     }
   }

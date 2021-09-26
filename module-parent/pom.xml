@@ -24,6 +24,8 @@
 		<module>data-service</module>
 		<module>general</module>
 		<module>general-provider</module>
+		<module>lineup</module>
+		<module>lineup-provider</module>
 		<module>basic-info</module>
 		<module>basic-info-provider</module>
 	</modules>
