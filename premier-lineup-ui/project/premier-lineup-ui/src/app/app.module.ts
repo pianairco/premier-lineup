@@ -18,6 +18,7 @@ import {HomeComponent} from './view/home/home.component';
 import {InitializerService} from "@lineup-app/core/service/initializer.service";
 import {AlertComponent} from './core/component/alert/alert.component';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {ClipboardModule} from "@angular/cdk/clipboard";
 
 const production = [
   { provide: AbstractTeammateService, useClass: TeammateService }
@@ -68,6 +69,7 @@ export function ApplicationInitializerFactory(translate: TranslateService, injec
     ReactiveFormsModule,
     AppRoutingModule,
     HttpClientModule,
+    ClipboardModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -78,7 +80,8 @@ export function ApplicationInitializerFactory(translate: TranslateService, injec
     SharedModule
   ],
   exports: [
-    BrowserModule
+    BrowserModule,
+    ClipboardModule,
   ],
   providers: [
     {

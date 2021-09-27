@@ -198,7 +198,9 @@ public class AuthRest {
             return ResponseEntity.ok(ResponseModel.builder().code(2).build());
         }
 
-        UserEntity byMobile = userRepository.findByMobile(loginInfo.getMobile());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(loginInfo.getMobile());
+        UserEntity byMobile = ((UserModel) userDetails).getUserEntity();
+//        UserEntity byMobile = userRepository.findByMobile(loginInfo.getMobile());
         if(CommonUtils.isNull(byMobile))
             return ResponseEntity.ok(ResponseModel.builder().code(3).build());
 
