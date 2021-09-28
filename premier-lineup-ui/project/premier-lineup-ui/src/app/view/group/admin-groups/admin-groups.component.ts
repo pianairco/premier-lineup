@@ -17,4 +17,8 @@ export class AdminGroupsComponent implements OnInit {
     })
   }
 
+  nav(link) {
+    console.log("nav", link)
+    window.location = link;
+  }
 }

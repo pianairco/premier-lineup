@@ -25,5 +25,11 @@
     "parent_id": 6,
     "title": "گروه های عضو",
     "link": "member-groups"
+  },
+  {
+    "id": 603,
+    "parent_id": 6,
+    "title": "درخواست عضویت",
+    "link": "join-by-uuid"
   }
 ]

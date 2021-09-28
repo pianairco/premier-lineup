@@ -34,8 +34,10 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.awt.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -85,6 +87,103 @@ public class AuthRest {
         return ResponseEntity.ok("hello test!");
     }
 
+    public String sendOtp(LoginInfo loginInfo) {
+        String otp = RandomStringUtils.randomNumeric(4);
+        loginInfo.setOtp(otp);
+        System.out.println(otp);
+//        SendResult send = api.send("1000596446", loginInfo.getMobile(),
+//                String.format("یکبار رمز\n%s", loginInfo.getOtp()));
+        /*Long aLong = SmsClient.SendMessageWithCode(loginInfo.getMobile(),
+                String.format("یکبار رمز\n%s", loginInfo.getOtp()));
+        if (aLong == 8) {
+            return ResponseEntity.ok(ResponseModel.builder().code(6)
+                    .data("شماره ارسال پیامک موقتا غیر فعال شده. لطفا مجددا تست نمایید.").build());
+        }*/
+        return otp;
+    }
+
+    @PostMapping(path = "request-forget-otp",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseModel> requestForgetOtp(
+            @RequestBody LoginInfo loginInfo, HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        Matcher matcher = mobileMatcher.matcher(loginInfo.getMobile());
+        if(!matcher.find()) {
+            return ResponseEntity.ok(ResponseModel.builder().code(1).build());
+        }
+        UserEntity byMobile = userRepository.findByMobile(loginInfo.getMobile());
+        if(byMobile == null) {
+            return ResponseEntity.ok(ResponseModel.builder().code(2).build());
+        }
+
+        if(CommonUtils.isNull(loginInfo.getPassword())) {
+            return ResponseEntity.ok(ResponseModel.builder().code(3).build());
+        } else if(loginInfo.getPassword().length() < 8 || loginInfo.getPassword().length() > 16) {
+            return ResponseEntity.ok(ResponseModel.builder().code(4)
+                    .data("کلمه عبور باید بین 8 تا 16 رقم باشد").build());
+        }
+
+        if(!Arrays.stream(env.getActiveProfiles()).anyMatch(p -> "develop".matches(p))) {
+            Captcha sessionCaptcha = (Captcha)request.getSession().getAttribute("simpleCaptcha");
+            if(CommonUtils.isNull(loginInfo.getCaptcha()))
+                return ResponseEntity.ok(ResponseModel.builder().code(4).build());
+            else if(!sessionCaptcha.isCorrect(loginInfo.getCaptcha())) {
+                return ResponseEntity.ok(ResponseModel.builder().code(5).build());
+            }
+        }
+
+        String otp = sendOtp(loginInfo);
+
+        Object uuid = pianaCacheService.put(UserEntity.builder()
+                .otp(otp)
+                .mobile(loginInfo.getMobile())
+                .password(loginInfo.getPassword())
+                .username(loginInfo.getMobile()).build());
+
+        return ResponseEntity.ok(ResponseModel.builder().code(0)
+                .data(Collections.singletonMap("uuid", uuid.toString())).build());
+    }
+
+    @PostMapping(path = "confirm-forget-otp",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseModel> confirmForgetOtp(
+            @RequestBody ConfirmInfo confirmInfo, HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(CommonUtils.isNull(authentication.getPrincipal()) ||
+                !(authentication.getPrincipal() instanceof String &&
+                        authentication.getPrincipal().toString().equalsIgnoreCase("anonymousUser"))) {
+            return ResponseEntity.ok(ResponseModel.builder().code(1).build());
+        }
+
+        if(CommonUtils.isNull(confirmInfo) || CommonUtils.isNull(confirmInfo.getOtp()) ||
+                CommonUtils.isNull(confirmInfo.getUuid())) {
+            return ResponseEntity.ok(ResponseModel.builder().code(2).build());
+        }
+
+        UserEntity userEntity = (UserEntity) pianaCacheService.getValue(confirmInfo.getUuid());
+        if(CommonUtils.isNull(userEntity)) {
+            return ResponseEntity.ok(ResponseModel.builder().code(3).build());
+        }
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userEntity.getMobile());
+        UserEntity byMobile = ((UserModel) userDetails).getUserEntity();
+        if(CommonUtils.isNull(byMobile))
+            return ResponseEntity.ok(ResponseModel.builder().code(4).build());
+        else if(!userEntity.getOtp().equalsIgnoreCase(confirmInfo.getOtp()))
+            return ResponseEntity.ok(ResponseModel.builder().code(5).build());
+
+        String rawPassword = userEntity.getPassword();
+        byMobile.setPassword(passwordEncoder.encode(rawPassword));
+        UserEntity saved = userRepository.save(byMobile);
+
+        this.loginComplete(saved, request, response);
+        AppInfo appInfo = getAppInfo(request);
+        return ResponseEntity.ok(ResponseModel.builder().code(0).data(appInfo).build());
+    }
+
     @PostMapping(path = "request-otp",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -116,17 +215,7 @@ public class AuthRest {
             }
         }
 
-        String otp = RandomStringUtils.randomNumeric(4);
-        loginInfo.setOtp(otp);
-        System.out.println(otp);
-//        SendResult send = api.send("1000596446", loginInfo.getMobile(),
-//                String.format("یکبار رمز\n%s", loginInfo.getOtp()));
-        Long aLong = SmsClient.SendMessageWithCode(loginInfo.getMobile(),
-                String.format("یکبار رمز\n%s", loginInfo.getOtp()));
-        if (aLong == 8) {
-            return ResponseEntity.ok(ResponseModel.builder().code(6)
-                    .data("شماره ارسال پیامک موقتا غیر فعال شده. لطفا مجددا تست نمایید.").build());
-        }
+        String otp = sendOtp(loginInfo);
 
         Object uuid = pianaCacheService.put(UserEntity.builder()
                 .otp(otp)
@@ -161,7 +250,9 @@ public class AuthRest {
             return ResponseEntity.ok(ResponseModel.builder().code(3).build());
         }
 
-        UserEntity byMobile = userRepository.findByMobile(userEntity.getMobile());
+        /*UserEntity byMobile = userRepository.findByMobile(userEntity.getMobile());*/
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userEntity.getMobile());
+        UserEntity byMobile = ((UserModel) userDetails).getUserEntity();
         if(!CommonUtils.isNull(byMobile))
             return ResponseEntity.ok(ResponseModel.builder().code(4).build());
         else if(!userEntity.getOtp().equalsIgnoreCase(confirmInfo.getOtp()))
@@ -177,14 +268,15 @@ public class AuthRest {
         userRepository.save(userEntity);
 
         this.loginComplete(saved, request, response);
-        return getAppInfo();
+        AppInfo appInfo = getAppInfo(request);
+        return ResponseEntity.ok(ResponseModel.builder().code(0).data(appInfo).build());
     }
 
     @PreAuthorize("!hasRole('ROLE_AUTHENTICATED')")
     @PostMapping(path = "login",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseModel> login(
+    public ResponseEntity login(
             @RequestBody LoginInfo loginInfo, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -221,14 +313,11 @@ public class AuthRest {
             }
         }
 
-        return getAppInfo();
+        AppInfo appInfo = getAppInfo(request);
+        return ResponseEntity.ok(ResponseModel.builder().code(0).data(appInfo).build());
     }
 
-    @CrossOrigin
-    @PostMapping(path = "app-info",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseModel> getAppInfo()
+    public AppInfo getAppInfo(HttpServletRequest request)
             throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         AppInfo appInfo = null;
@@ -248,6 +337,16 @@ public class AuthRest {
                     .username("unknown")
                     .build();
         }
+        return appInfo;
+    }
+
+    @CrossOrigin
+    @PostMapping(path = "app-info",
+            consumes = MediaType.APPLICATION_JSON_VALUE,
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ResponseModel> getAppInfoRequest(HttpServletRequest request)
+            throws IOException {
+        AppInfo appInfo = getAppInfo(request);
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(appInfo).build());
     }
 
@@ -273,7 +372,8 @@ public class AuthRest {
         session.invalidate();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         authentication.setAuthenticated(false);
-        return getAppInfo();
+        AppInfo appInfo = getAppInfo(request);
+        return ResponseEntity.ok(ResponseModel.builder().code(0).data(appInfo).build());
     }
 
     /*@CrossOrigin

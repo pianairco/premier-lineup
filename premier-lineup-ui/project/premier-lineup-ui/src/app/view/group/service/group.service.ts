@@ -29,6 +29,36 @@ export class GroupService {
     }
   }
 
+  async groupInfoByUuid(uuid: string) {
+    try {
+      let res = await axios.get(
+        this.constantService.getRemoteServer() + '/api/modules/lineup/group/info-by-uuid/' + uuid,
+        { headers: { 'Content-Type': 'APPLICATION/JSON; charset=utf-8' } });
+      if(res['data']['code'] === 0) {
+        return res['data']['data'];
+      } else {
+        return null;
+      }
+    } catch (err) {
+      return null;
+    }
+  }
+
+  async sendJoinRequest(uuid) {
+    try {
+      let res = await axios.get(
+        this.constantService.getRemoteServer() + '/api/modules/lineup/group/join/' + uuid,
+        { headers: { 'Content-Type': 'APPLICATION/JSON; charset=utf-8' } });
+      if(res['data']['code'] === 0) {
+        return res['data']['data'];
+      } else {
+        return null;
+      }
+    } catch (err) {
+      return null;
+    }
+  }
+
   async setImage(imageBase64: string, groupId, rotate: number) {
     try {
       let headers = {

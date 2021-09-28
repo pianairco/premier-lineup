@@ -98,14 +98,16 @@
               <div class="col col-12 text-start mt-2">
                 <button class="btn btn-sm btn-link"
                    type="button"
+                        (click)="gotoForgetPassword()"
                    style="white-space: nowrap;">فراموشی رمز عبور</button>
-                <a class="btn btn-sm btn-link"
-                   [routerLink]="'/auth/sign-in'"
+<!--                [routerLink]="'/auth/sign-in'"-->
+                <button class="btn btn-sm btn-link"
                    type="button"
-                   style="white-space: nowrap;">ثبت نام</a>
+                   (click)="gotoRegistration()"
+                   style="white-space: nowrap;">ثبت نام</button>
                 <a class="btn btn-sm btn-link text-black-50"
-                   [routerLink]="'/root/home'"
                    type="button"
+                   [routerLink]="'/root/home'"
                    style="white-space: nowrap;">انصراف</a>
               </div>
             </div>

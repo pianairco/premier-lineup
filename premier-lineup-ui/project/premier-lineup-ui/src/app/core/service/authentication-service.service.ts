@@ -111,6 +111,7 @@ export class AuthenticationService {
 
   async confirmOtp(otp) {
     try {
+      let returnUrl = this.route.snapshot.queryParamMap.get("returnUrl");
       let res = await axios.post(this.constantService.getRemoteServer() + '/api/modules/auth/confirm-otp',
         { type: 'otp', uuid: this._uuid, otp: otp },
         { headers: { 'Content-Type': 'APPLICATION/JSON; charset=utf-8' } });
@@ -118,13 +119,68 @@ export class AuthenticationService {
       if(res['data']['code'] === 0) {
         this.setAppInfo(res['data']['data']);
         await this.menuService.getMenu();
+        if(returnUrl) {
+          this.router.navigate([atob(returnUrl)]);
+        } else {
+          this.router.navigate(['/root/home']);
+        }
         return true;
       } else {
+        this.router.navigate(['/auth/sign-in']);
         return false;
       }
       // this.pianaStorageService.putObject('appInfo', this._appInfo);
     } catch (err) {
       this._uuid = '';
+      this.router.navigate(['/auth/sign-in']);
+      return false;
+    }
+  }
+
+  async requestForgetOtp(loginInfo) {
+    try {
+      let res = await axios.post(this.constantService.getRemoteServer() + '/api/modules/auth/request-forget-otp',
+        loginInfo,
+        { headers: { 'Content-Type': 'APPLICATION/JSON; charset=utf-8' } });
+      // console.log(res);
+      if(res['data']['code'] === 0) {
+        this._uuid = res['data']['data']['uuid'];
+        console.log(this._uuid)
+        return true;
+      } else {
+        return false;
+      }
+      // this.pianaStorageService.putObject('appInfo', this._appInfo);
+
+    } catch (err) {
+      return false;
+    }
+  }
+
+  async confirmForgetOtp(otp) {
+    try {
+      let returnUrl = this.route.snapshot.queryParamMap.get("returnUrl");
+      let res = await axios.post(this.constantService.getRemoteServer() + '/api/modules/auth/confirm-forget-otp',
+        { type: 'otp', uuid: this._uuid, otp: otp },
+        { headers: { 'Content-Type': 'APPLICATION/JSON; charset=utf-8' } });
+      console.log(res);
+      if(res['data']['code'] === 0) {
+        this.setAppInfo(res['data']['data']);
+        await this.menuService.getMenu();
+        if(returnUrl) {
+          this.router.navigate([atob(returnUrl)]);
+        } else {
+          this.router.navigate(['/root/home']);
+        }
+        return true;
+      } else {
+        this.router.navigate(['/auth/sign-in']);
+        return false;
+      }
+      // this.pianaStorageService.putObject('appInfo', this._appInfo);
+    } catch (err) {
+      this._uuid = '';
+      this.router.navigate(['/auth/sign-in']);
       return false;
     }
   }

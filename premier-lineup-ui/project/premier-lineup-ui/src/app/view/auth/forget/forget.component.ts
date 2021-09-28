@@ -10,11 +10,11 @@ import {ActivatedRoute, Router} from '@angular/router';
 import axios from 'axios';
 
 @Component({
-  selector: 'app-signin',
-  templateUrl: './signin.component.html',
-  styleUrls: ['./signin.component.css']
+  selector: 'app-forget',
+  templateUrl: './forget.component.html',
+  styleUrls: ['./forget.component.css']
 })
-export class SigninComponent implements OnInit {
+export class ForgetComponent implements OnInit {
 
   showModal: boolean = true;
   hide = true;
@@ -132,15 +132,15 @@ export class SigninComponent implements OnInit {
     this.loginInfo.password = this.form.get("password").value;
     this.loginInfo.captcha = this.form.get("captcha").value;
     console.log(this.loginInfo, this.form.get("mobile").value, this.form.get("password").value)
-    let promise = this.authenticationService.requestOtp(this.loginInfo);
+    let promise = this.authenticationService.requestForgetOtp(this.loginInfo);
     promise.then(res => {
       if(res == true) {
         console.log("res is true")
         let returnUrl = this.route.snapshot.queryParamMap.get("returnUrl");
         if(returnUrl)
-          this.router.navigate(['/auth/confirm'], { queryParams: { returnUrl: returnUrl}});
+          this.router.navigate(['/auth/forget-confirm'], { queryParams: { returnUrl: returnUrl}});
         else
-          this.router.navigate(['/auth/confirm'])
+          this.router.navigate(['/auth/forget-confirm'])
       }
     }, err => {
       console.log(this.myControl);

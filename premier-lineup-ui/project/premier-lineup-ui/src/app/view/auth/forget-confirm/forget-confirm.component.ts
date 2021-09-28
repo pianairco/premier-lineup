@@ -4,11 +4,11 @@ import {AuthenticationService} from "@lineup-app/core/service/authentication-ser
 import {Router} from "@angular/router";
 
 @Component({
-  selector: 'app-confirm',
-  templateUrl: './confirm.component.html',
-  styleUrls: ['./confirm.component.css']
+  selector: 'app-forget-confirm',
+  templateUrl: './forget-confirm.component.html',
+  styleUrls: ['./forget-confirm.component.css']
 })
-export class ConfirmComponent implements OnInit {
+export class ForgetConfirmComponent implements OnInit {
   showModal: boolean = true;
   hide = true;
   wait = false;
@@ -30,7 +30,7 @@ export class ConfirmComponent implements OnInit {
   }
 
   confirmOtp() {
-    let promise = this.authenticationService.confirmOtp(this.form.get("otp").value);
+    let promise = this.authenticationService.confirmForgetOtp(this.form.get("otp").value);
     promise.then(res => {
       /*if(res == true) {
         this.router.navigate(['/root/home']);

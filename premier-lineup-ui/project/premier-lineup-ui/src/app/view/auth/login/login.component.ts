@@ -163,6 +163,21 @@ export class LoginComponent implements OnInit, AfterViewInit {
     //   });
   }
 
+  gotoRegistration() {
+    let returnUrl = this.route.snapshot.queryParamMap.get("returnUrl");
+    if(returnUrl)
+      this.router.navigate(['/auth/sign-in'], { queryParams: { returnUrl: returnUrl}});
+    else
+      this.router.navigate(['/auth/sign-in'])
+  }
+
+  gotoForgetPassword() {
+    let returnUrl = this.route.snapshot.queryParamMap.get("returnUrl");
+    if(returnUrl)
+      this.router.navigate(['/auth/forget'], { queryParams: { returnUrl: returnUrl}});
+    else
+      this.router.navigate(['/auth/forget'])
+  }
 }
 
 export class Selectable {

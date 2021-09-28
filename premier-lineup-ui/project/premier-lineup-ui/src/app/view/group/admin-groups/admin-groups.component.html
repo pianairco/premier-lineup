@@ -1,20 +1,22 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col col-sm-12 col-md-4 col-lg-3">
+    <div class="col col-sm-12 col-12 col-md-4 col-lg-3 my-2">
       <div class="card" >
-        <img src="/api/modules/lineup/group/image" class="card-img-top" alt="...">
+        <img src="/api/modules/lineup/group/image" class="card-img-top">
         <div class="card-body">
           <h5 class="card-title">گروه جدید</h5>
           <a [routerLink]="'/root/authenticated/group/create'" class="btn btn-primary">ایجاد</a>
         </div>
       </div>
     </div>
-    <div class="col col-sm-12 col-md-4 col-lg-3" *ngFor="let group of groups">
-      <div class="card" style="width: 18rem;">
-        <img src="..." class="card-img-top" alt="...">
+    <div class="col col-sm-12 col-12 col-md-4 col-lg-3 my-2" *ngFor="let group of groups">
+      <div class="card">
+        <img src="/api/modules/lineup/group/image" class="card-img-top">
         <div class="card-body">
           <h5 class="card-title">{{group['name']}}</h5>
-          <a href="#" class="btn btn-primary">ورود</a>
+          <button class="btn btn-primary mx-2">ورود</button>
+<!--          <button class="btn btn-success" (click)="nav(group['joinLink'])">کپی لینک اشتراک</button>-->
+          <button class="btn btn-success" [cdkCopyToClipboard]="group['joinLink']">کپی لینک اشتراک</button>
         </div>
       </div>
     </div>
