@@ -59,7 +59,7 @@ const modules = [
   MatPaginatorModule,
   MatSortModule,
   MatAutocompleteModule,
-
+  MatDialogModule,
   MatBadgeModule,
   MatButtonToggleModule,
   MatChipsModule,

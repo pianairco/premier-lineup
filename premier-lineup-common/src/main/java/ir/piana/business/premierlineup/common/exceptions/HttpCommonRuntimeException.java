@@ -9,6 +9,10 @@ public class HttpCommonRuntimeException extends RuntimeException {
     private int code;
     private String message;
 
+    public HttpCommonRuntimeException(int code, String message) {
+        this(HttpStatus.OK, code, message);
+    }
+
     public HttpCommonRuntimeException(HttpStatus httpStatus, int code, String message) {
         this.httpStatus = httpStatus;
         this.code = code;

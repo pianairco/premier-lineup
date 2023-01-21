@@ -8,12 +8,10 @@ import ir.piana.business.premierlineup.common.service.PianaCacheService;
 import ir.piana.business.premierlineup.common.util.CommonUtils;
 import ir.piana.business.premierlineup.module.auth.model.UserModel;
 import ir.piana.business.premierlineup.module.auth.service.AuthenticationService;
-import ir.piana.business.premierlineup.module.lineup.data.entity.GroupsEntity;
+import ir.piana.business.premierlineup.module.lineup.data.entity.*;
 import ir.piana.business.premierlineup.module.lineup.data.entity.GroupsImageEntity;
-import ir.piana.business.premierlineup.module.lineup.data.entity.GroupsJoinRequestEntity;
 import ir.piana.business.premierlineup.module.lineup.data.entity.GroupsMemberEntity;
 import ir.piana.business.premierlineup.module.lineup.data.repository.GroupsImageRepository;
-import ir.piana.business.premierlineup.module.lineup.data.repository.GroupsJoinRequestRepository;
 import ir.piana.business.premierlineup.module.lineup.data.repository.GroupsMemberRepository;
 import ir.piana.business.premierlineup.module.lineup.data.repository.GroupsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +45,6 @@ public class GroupRest implements AfterPreparationImageAction {
 
     @Autowired
     private GroupsMemberRepository groupsMemberRepository;
-
-    @Autowired
-    private GroupsJoinRequestRepository joinRequestRepository;
 
     @Autowired
     private Environment env;
@@ -142,41 +137,18 @@ public class GroupRest implements AfterPreparationImageAction {
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(save).build());
     }
 
-    @GetMapping("info-by-uuid/{uuid}")
-    public ResponseEntity<ResponseModel> getInfoByUuid(@PathVariable("uuid") String uuid) {
-        Optional<GroupsEntity> byUuid = groupsRepository.findByUuid(uuid);
-        if(!byUuid.isPresent())
-            return ResponseEntity.ok(ResponseModel.builder().code(1).build());
-        return ResponseEntity.ok(ResponseModel.builder().code(0).data(byUuid.get()).build());
-    }
-
-    @GetMapping("goto-join-by-uuid/{uuid}")
-    public ResponseEntity gotoJoinByUuid(@PathVariable("uuid") String uuid) {
-        Optional<GroupsEntity> byUuid = groupsRepository.findByUuid(uuid);
-        if(!byUuid.isPresent()) {
-            return ResponseEntity.ok(ResponseModel.builder().code(1).build());
-        }
-        return ResponseEntity.status(302).header("Location",
-                "https://piana.ir/#/root/authenticated/group/join-by-uuid/" + uuid).build();
-    }
-
     @GetMapping("shared-link")
     public ResponseEntity<ResponseModel> getSharedLink(@RequestParam("group-id") Long groupId) {
         Optional<GroupsEntity> byId = groupsRepository.findById(groupId);
         if(!byId.isPresent())
             return ResponseEntity.ok(ResponseModel.builder().code(1).build());
-        return ResponseEntity.ok(ResponseModel.builder().code(0)
-                .data("https://piana.ir:8443/api/modules/lineup/group/goto-join-by-uuid/" + byId.get().getUuid())
-                .build());
+        return ResponseEntity.ok(ResponseModel.builder().code(0).data("join/" + byId.get().getUuid()).build());
     }
 
     @GetMapping("join/{uuid}")
-    public ResponseEntity<ResponseModel> join(
-            HttpServletRequest request,
-            @PathVariable("uuid") String uuid) {
+    public ResponseEntity<ResponseModel> join(@PathVariable("uuid") String uuid) {
         UserModel userModel = authenticationService.getIfAuthenticated();
         if(userModel == null) {
-            request.getSession().setAttribute("join-to-group", uuid);
             return ResponseEntity.ok(ResponseModel.builder().code(1).build());
         }
         Optional<GroupsEntity> byUuid = groupsRepository.findByUuid(uuid);
@@ -189,21 +161,11 @@ public class GroupRest implements AfterPreparationImageAction {
         if(byGroupIdAndUserId.isPresent()) {
             return ResponseEntity.ok(ResponseModel.builder().code(3).build());
         }
-
-        if(byUuid.get().isPublic()) {
-            GroupsMemberEntity save = GroupsMemberEntity.builder()
-                    .groupId(byUuid.get().getId())
-                    .userId(userModel.getUserEntity().getId())
-                    .build();
-            groupsMemberRepository.save(save);
-        } else {
-            GroupsJoinRequestEntity joinRequest = GroupsJoinRequestEntity.builder()
-                    .groupId(byUuid.get().getId())
-                    .userId(userModel.getUserEntity().getId())
-                    .build();
-            joinRequestRepository.save(joinRequest);
-        }
-
+        GroupsMemberEntity save = GroupsMemberEntity.builder()
+                .groupId(byUuid.get().getId())
+                .userId(userModel.getUserEntity().getId())
+                .build();
+        groupsMemberRepository.save(save);
         return ResponseEntity.ok(ResponseModel.builder().code(0).build());
     }
 
@@ -214,9 +176,6 @@ public class GroupRest implements AfterPreparationImageAction {
             return ResponseEntity.ok(ResponseModel.builder().code(1).build());
         }
         List<GroupsEntity> allByUserId = groupsRepository.findAllByUserId(userModel.getUserEntity().getId());
-        allByUserId.stream().forEach(g -> {
-            g.setJoinLink("https://piana.ir:8443/api/modules/lineup/group/goto-join-by-uuid/" + g.getUuid());
-        });
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(allByUserId).build());
     }
 

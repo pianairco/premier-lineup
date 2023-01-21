@@ -19,6 +19,9 @@ import {InitializerService} from "@lineup-app/core/service/initializer.service";
 import {AlertComponent} from './core/component/alert/alert.component';
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 import {ClipboardModule} from "@angular/cdk/clipboard";
+import {CommonDialogComponent} from "@lineup-app/core/component/dialog/common-dialog/common-dialog.component";
+import {ConfirmDialogComponent} from "@lineup-app/core/component/dialog/confirm-dialog/confirm-dialog.component";
+import {MessageDialogComponent} from "@lineup-app/core/component/dialog/message-dialog/message-dialog.component";
 
 const production = [
   { provide: AbstractTeammateService, useClass: TeammateService }
@@ -59,7 +62,10 @@ export function ApplicationInitializerFactory(translate: TranslateService, injec
     TopbarComponent,
     RootComponent,
     HomeComponent,
-    AlertComponent
+    AlertComponent,
+    CommonDialogComponent,
+    ConfirmDialogComponent,
+    MessageDialogComponent
   ],
   imports: [
     BrowserModule,

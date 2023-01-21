@@ -7,7 +7,10 @@ import {LoadingService} from '@lineup-app/core/service/loading.service';
 import {ConstantService} from '@lineup-app/core/service/constant.service';
 import {AuthenticationService} from '@lineup-app/core/service/authentication-service.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {MatDialog, MatDialogRef} from "@angular/material/dialog";
+
 import axios from 'axios';
+import {AlertComponent} from "@lineup-app/core/component/alert/alert.component";
 
 @Component({
   selector: 'app-signin',
@@ -41,6 +44,7 @@ export class SigninComponent implements OnInit {
   subDomain = null;
 
   constructor(
+    public dialog: MatDialog,
     private builder: FormBuilder,
     private ajaxCall: AjaxCallService,
     private pianaStorageService: PianaStorageService,
@@ -141,8 +145,11 @@ export class SigninComponent implements OnInit {
           this.router.navigate(['/auth/confirm'], { queryParams: { returnUrl: returnUrl}});
         else
           this.router.navigate(['/auth/confirm'])
+      } else {
+        console.log(res)
       }
     }, err => {
+      console.log(err);
       console.log(this.myControl);
       this.captchaCounter++;
     });

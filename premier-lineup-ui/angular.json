@@ -78,8 +78,8 @@
             "browserTarget": "premier-lineup-ui:build",
             "ssl": true,
             "proxyConfig": "project/premier-lineup-ui/src/proxy.conf.js",
-            "host": "localhost",
-            "port": 443,
+            "host": "192.168.1.4",
+            "port": 443
           },
           "configurations": {
             "production": {

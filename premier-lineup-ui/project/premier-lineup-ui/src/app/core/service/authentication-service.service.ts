@@ -4,13 +4,14 @@ import {PianaStorageService} from "./piana-storage.service";
 import {LoadingService} from "./loading.service";
 import {ConstantService} from "./constant.service";
 import {BehaviorSubject, Observable} from "rxjs";
-import {EditModeObject} from "./share-state.service";
 import {GeneralStateService} from "./general-state.service";
 import {ActivatedRoute, Router} from "@angular/router";
 import {MatSnackBar} from "@angular/material/snack-bar";
-import {AlertComponent} from "@lineup-app/core/component/alert/alert.component";
 import {NotificationService} from "@lineup-app/core/service/notification.service";
 import {MenuService} from "@lineup-app/core/service/menu-service.service";
+import {AlertComponent} from "@lineup-app/core/component/alert/alert.component";
+import {MatDialog} from "@angular/material/dialog";
+import {MessageDialogComponent} from "@lineup-app/core/component/dialog/message-dialog/message-dialog.component";
 // import {GoogleLoginProvider, SocialAuthService} from "angularx-social-login";
 
 const googleLoginOptions = {
@@ -45,6 +46,7 @@ export class AuthenticationService {
   }
 
   constructor(
+    public dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
     /*private authService: SocialAuthService,*/
@@ -100,6 +102,18 @@ export class AuthenticationService {
         console.log(this._uuid)
         return true;
       } else {
+        console.log(res['data']['description'])
+        console.log(res)
+        const dialogRef = this.dialog.open(MessageDialogComponent, {
+          width: '500px',
+          data: {
+            title: 'خطا',
+            message: res['data']['data']
+          }
+        });
+        dialogRef.afterClosed().subscribe(result => {
+          console.log('The dialog was closed => ', result);
+        });
         return false;
       }
       // this.pianaStorageService.putObject('appInfo', this._appInfo);
@@ -202,7 +216,7 @@ export class AuthenticationService {
         }
         return true;
       } else {
-        this.notificationService.changeMessage("error", "not work")
+        this.notificationService.changeMessage("error", res['data']['description'])
         /*this._snackBar.open("error", "close", {
           horizontalPosition: 'end',
           verticalPosition: 'top',

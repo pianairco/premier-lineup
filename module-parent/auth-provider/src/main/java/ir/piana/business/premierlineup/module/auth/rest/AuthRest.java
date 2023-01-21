@@ -1,5 +1,10 @@
 package ir.piana.business.premierlineup.module.auth.rest;
 
+import com.kavenegar.sdk.KavenegarApi;
+import com.kavenegar.sdk.excepctions.ApiException;
+import com.kavenegar.sdk.excepctions.HttpException;
+import com.kavenegar.sdk.models.SendResult;
+import ir.piana.business.premierlineup.common.exceptions.HttpCommonRuntimeException;
 import ir.piana.business.premierlineup.common.model.ResponseModel;
 import ir.piana.business.premierlineup.common.service.PianaCacheService;
 import ir.piana.business.premierlineup.common.util.CommonUtils;
@@ -16,6 +21,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -71,7 +77,7 @@ public class AuthRest {
     @Autowired
     private UserDetailsServiceImpl userDetailsService;
 
-//    private KavenegarApi api;
+    private KavenegarApi kavenegarApi;
 
     @Autowired
     private PianaCacheService pianaCacheService;
@@ -80,6 +86,7 @@ public class AuthRest {
     public void init() {
         System.out.println(loginRedirect);
         mobileMatcher = Pattern.compile("09[0-4]{1}[0-9]{8}");
+        kavenegarApi = new KavenegarApi("6B6773663258696B304F65576F4433516739573856513D3D");
     }
 
     @GetMapping(path = "test")
@@ -93,12 +100,45 @@ public class AuthRest {
         System.out.println(otp);
 //        SendResult send = api.send("1000596446", loginInfo.getMobile(),
 //                String.format("یکبار رمز\n%s", loginInfo.getOtp()));
-        /*Long aLong = SmsClient.SendMessageWithCode(loginInfo.getMobile(),
-                String.format("یکبار رمز\n%s", loginInfo.getOtp()));
-        if (aLong == 8) {
-            return ResponseEntity.ok(ResponseModel.builder().code(6)
-                    .data("شماره ارسال پیامک موقتا غیر فعال شده. لطفا مجددا تست نمایید.").build());
-        }*/
+        Long aLong = null;
+        try {
+            aLong = SmsClient.SendMessageWithCode(loginInfo.getMobile(),
+                    String.format("یکبار رمز\n%s", loginInfo.getOtp()));
+            if (aLong == 8) {
+                throw new HttpCommonRuntimeException(HttpStatus.OK, 6, "شماره ارسال پیامک موقتا غیر فعال شده. لطفا مجددا تست نمایید.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return otp;
+    }
+
+    public String sendOtpKN(LoginInfo loginInfo) {
+        String otp = RandomStringUtils.randomNumeric(4);
+        loginInfo.setOtp(otp);
+        System.out.println(otp);
+//        SendResult send = api.send("1000596446", loginInfo.getMobile(),
+//                String.format("یکبار رمز\n%s", loginInfo.getOtp()));
+        Long aLong = null;
+        try {
+//            10006600060060
+            /*SendResult send = kavenegarApi.send("2000500666", loginInfo.getMobile(),
+                    String.format("یکبار رمز\n%s", loginInfo.getOtp()));
+            if (send.getStatus() != 0) {
+                throw new HttpCommonRuntimeException(6, "شماره ارسال پیامک موقتا غیر فعال شده. لطفا مجددا تست نمایید.");
+            }*/
+        } catch (HttpException ex)
+        { // در صورتی که خروجی وب سرویس 200 نباشد این خطارخ می دهد.
+            System.out.print("HttpException  : " + ex.getMessage());
+            throw new HttpCommonRuntimeException(7, "error");
+        }
+        catch (ApiException ex)
+        { // در صورتی که خروجی وب سرویس 200 نباشد این خطارخ می دهد.
+            System.out.print("ApiException : " + ex.getMessage());
+            throw new HttpCommonRuntimeException(8, "error");
+        }
+
         return otp;
     }
 
@@ -133,7 +173,7 @@ public class AuthRest {
             }
         }
 
-        String otp = sendOtp(loginInfo);
+        String otp = sendOtpKN(loginInfo);
 
         Object uuid = pianaCacheService.put(UserEntity.builder()
                 .otp(otp)
@@ -215,7 +255,7 @@ public class AuthRest {
             }
         }
 
-        String otp = sendOtp(loginInfo);
+        String otp = sendOtpKN(loginInfo);
 
         Object uuid = pianaCacheService.put(UserEntity.builder()
                 .otp(otp)
@@ -251,12 +291,13 @@ public class AuthRest {
         }
 
         /*UserEntity byMobile = userRepository.findByMobile(userEntity.getMobile());*/
-        UserDetails userDetails = userDetailsService.loadUserByUsername(userEntity.getMobile());
-        UserEntity byMobile = ((UserModel) userDetails).getUserEntity();
-        if(!CommonUtils.isNull(byMobile))
-            return ResponseEntity.ok(ResponseModel.builder().code(4).build());
-        else if(!userEntity.getOtp().equalsIgnoreCase(confirmInfo.getOtp()))
-            return ResponseEntity.ok(ResponseModel.builder().code(5).build());
+//        UserEntity byMobile = userRepository.save(userEntity);
+//        UserDetails userDetails = userDetailsService.loadUserByUsername(userEntity.getMobile());
+//        byMobile = ((UserModel) userDetails).getUserEntity();
+//        if(!CommonUtils.isNull(byMobile))
+//            return ResponseEntity.ok(ResponseModel.builder().code(4).build());
+//        else if(!userEntity.getOtp().equalsIgnoreCase(confirmInfo.getOtp()))
+//            return ResponseEntity.ok(ResponseModel.builder().code(5).build());
 
         String rawPassword = userEntity.getPassword();
         userEntity.setPassword(passwordEncoder.encode(rawPassword));
