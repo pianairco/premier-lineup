@@ -9,6 +9,10 @@ CREATE TABLE IF NOT EXISTS groups (
     constraint fk_groups_2_users foreign key (user_id) references users(id)
 );
 
+INSERT INTO groups (id, user_id, is_public, name) select * from (
+    select 1 id, 1 user_id, 1 is_public, 'vahdat' name
+) where not exists(select * from groups);
+
 
 CREATE TABLE IF NOT EXISTS groups_image (
     id bigint primary key,
@@ -28,11 +32,34 @@ CREATE TABLE IF NOT EXISTS groups_member (
     constraint fk_groups_member_2_users foreign key (user_id) references users(id)
 );
 
-CREATE TABLE IF NOT EXISTS groups_join_request (
+INSERT INTO groups_member (id, group_id, user_id) select * from (
+    select 1 id, 1 group_id, 1 user_id
+) where not exists(select * from groups_member);
+
+CREATE TABLE IF NOT EXISTS from_group_invitation_request (
     id bigint primary key,
-    group_id bigint,
-    user_id bigint,
-    constraint fk_groups_join_request_2_groups foreign key (group_id) references groups(id),
-    constraint fk_groups_join_request_2_users foreign key (user_id) references users(id)
+    group_id bigint not null,
+    unique_id char(36) not null,
+    try_count number(6) default 0,
+    registered_count number(6) default 0,
+    is_free number(1),
+    constraint fk_from_group_invitation_request_2_groups foreign key (group_id) references groups(id)
 );
 
+CREATE TABLE IF NOT EXISTS group_invitation_request (
+    id bigint primary key,
+    unique_id char(36) not null,
+    group_id bigint not null,
+    mobile char(11) not null,
+    constraint fk_group_invitation_request_2_groups
+    foreign key (group_id) references groups(id)
+);
+
+CREATE TABLE IF NOT EXISTS group_join_request (
+    id bigint primary key,
+    user_id bigint,
+    group_id bigint,
+    accepted number(1) default 0,
+    constraint fk_groups_join_request_2_users foreign key (user_id) references users(id),
+    constraint fk_groups_join_request_2_groups foreign key (group_id) references groups(id)
+);

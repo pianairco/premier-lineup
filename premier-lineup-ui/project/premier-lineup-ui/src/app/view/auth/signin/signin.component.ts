@@ -27,6 +27,7 @@ export class SigninComponent implements OnInit {
   myControl = new FormControl();
 // @ts-ignore
   loginInfo: {
+    username: '',
     mobile: '',
     password: '',
     captcha: '',
@@ -55,6 +56,7 @@ export class SigninComponent implements OnInit {
     private router: Router) {
 
     this.form = this.builder.group({
+      username: [this.loginInfo.username],
       mobile: [this.loginInfo.mobile],
       password: [this.loginInfo.password],
       captcha: [this.loginInfo.captcha]
@@ -131,8 +133,8 @@ export class SigninComponent implements OnInit {
   }
 
   requestOtp() {
+    this.loginInfo.username = this.form.get("username").value;
     this.loginInfo.mobile = this.form.get("mobile").value;
-
     this.loginInfo.password = this.form.get("password").value;
     this.loginInfo.captcha = this.form.get("captcha").value;
     console.log(this.loginInfo, this.form.get("mobile").value, this.form.get("password").value)

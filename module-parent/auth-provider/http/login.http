@@ -1,0 +1,17 @@
+POST https://localhost:8443/api/modules/auth/app-info
+content-type: application/json;charset=UTF-8
+###
+POST https://localhost:8443/api/modules/auth/login
+content-type: application/json;charset=UTF-8
+
+{
+  "password": "123456",
+  "mobile": "09391366128",
+  "captcha": "15306"
+}
+###
+POST https://localhost:8443/api/modules/auth/logout
+content-type: application/json;charset=UTF-8
+
+{
+}

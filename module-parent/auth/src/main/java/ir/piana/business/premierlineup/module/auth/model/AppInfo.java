@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AppInfo {
+    private String mobile;
     private String username;
     private String email;
     private String pictureUrl;

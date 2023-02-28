@@ -1,0 +1,39 @@
+POST https://localhost:8443/api/modules/auth/app-info
+content-type: application/json;charset=UTF-8
+###
+GET https://localhost:8443/resources/captcha
+###
+POST https://localhost:8443/api/modules/auth/register/request-otp
+content-type: application/json;application/json;charset=UTF-8
+
+{
+  "username": "mj",
+  "password": "123456",
+  "mobile": "09391366128",
+  "captcha": "15306"
+}
+###
+POST https://localhost:8443/api/modules/auth/register/confirm-otp
+content-type: application/json;application/json;charset=UTF-8
+
+{
+  "type": "",
+  "uuid": "1e2c0341-bff9-4c89-805a-7de459877671",
+  "otp": "641942"
+}
+###
+POST https://localhost:8443/api/modules/auth/logout
+content-type: application/json;charset=UTF-8
+
+{
+}
+###
+POST https://localhost:8443/api/modules/auth/login
+content-type: application/json;charset=UTF-8
+
+{
+  "username": "ali",
+  "password": "123456",
+  "mobile": "09391366128",
+  "captcha": "15306"
+}

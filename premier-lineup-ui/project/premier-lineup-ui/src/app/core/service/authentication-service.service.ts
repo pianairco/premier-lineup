@@ -93,7 +93,7 @@ export class AuthenticationService {
 
   async requestOtp(loginInfo) {
     try {
-      let res = await axios.post(this.constantService.getRemoteServer() + '/api/modules/auth/request-otp',
+      let res = await axios.post(this.constantService.getRemoteServer() + '/api/modules/auth/register/request-otp',
         loginInfo,
         { headers: { 'Content-Type': 'APPLICATION/JSON; charset=utf-8' } });
       // console.log(res);
@@ -126,7 +126,7 @@ export class AuthenticationService {
   async confirmOtp(otp) {
     try {
       let returnUrl = this.route.snapshot.queryParamMap.get("returnUrl");
-      let res = await axios.post(this.constantService.getRemoteServer() + '/api/modules/auth/confirm-otp',
+      let res = await axios.post(this.constantService.getRemoteServer() + '/api/modules/auth/register/confirm-otp',
         { type: 'otp', uuid: this._uuid, otp: otp },
         { headers: { 'Content-Type': 'APPLICATION/JSON; charset=utf-8' } });
       console.log(res);

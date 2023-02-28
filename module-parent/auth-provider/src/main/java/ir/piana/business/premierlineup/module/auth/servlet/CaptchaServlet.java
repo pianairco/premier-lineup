@@ -44,6 +44,7 @@ public class CaptchaServlet extends HttpServlet {
         Captcha captcha = (new Captcha.Builder(width, height))
                 .addText(renderer).build();
         CaptchaServletUtil.writeImage(resp, captcha.getImage());
+        System.out.println(captcha.getAnswer());
         req.getSession().setAttribute("simpleCaptcha", captcha);
     }
 }

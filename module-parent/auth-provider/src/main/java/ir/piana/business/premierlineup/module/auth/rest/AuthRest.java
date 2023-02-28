@@ -13,7 +13,10 @@ import ir.piana.business.premierlineup.module.auth.data.entity.UserEntity;
 import ir.piana.business.premierlineup.module.auth.data.entity.UserRolesEntity;
 import ir.piana.business.premierlineup.module.auth.data.repository.UserRepository;
 import ir.piana.business.premierlineup.module.auth.data.repository.UserRolesRepository;
-import ir.piana.business.premierlineup.module.auth.model.*;
+import ir.piana.business.premierlineup.module.auth.model.AppInfo;
+import ir.piana.business.premierlineup.module.auth.model.ConfirmInfo;
+import ir.piana.business.premierlineup.module.auth.model.LoginInfo;
+import ir.piana.business.premierlineup.module.auth.model.UserModel;
 import ir.piana.business.premierlineup.module.auth.service.UserDetailsServiceImpl;
 import ir.piana.business.premierlineup.module.auth.wssupport.SmsClient;
 import nl.captcha.Captcha;
@@ -21,6 +24,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,17 +37,19 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.awt.*;
 import java.io.IOException;
-import java.util.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -115,13 +121,17 @@ public class AuthRest {
     }
 
     public String sendOtpKN(LoginInfo loginInfo) {
-        String otp = RandomStringUtils.randomNumeric(4);
+        String otp = RandomStringUtils.randomNumeric(6);
         loginInfo.setOtp(otp);
         System.out.println(otp);
 //        SendResult send = api.send("1000596446", loginInfo.getMobile(),
 //                String.format("یکبار رمز\n%s", loginInfo.getOtp()));
         Long aLong = null;
         try {
+            SendResult send = kavenegarApi.verifyLookup(loginInfo.getMobile(), loginInfo.getOtp(), "lineup-verify");
+            if (!Arrays.asList(0, 5).contains(send.getStatus())) {
+                throw new HttpCommonRuntimeException(6, "شماره ارسال پیامک موقتا غیر فعال شده. لطفا مجددا تست نمایید.");
+            }
 //            10006600060060
             /*SendResult send = kavenegarApi.send("2000500666", loginInfo.getMobile(),
                     String.format("یکبار رمز\n%s", loginInfo.getOtp()));
@@ -224,11 +234,12 @@ public class AuthRest {
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(appInfo).build());
     }
 
-    @PostMapping(path = "request-otp",
+    @PostMapping(path = "register/request-otp",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ResponseModel> requestOtp(
-            @RequestBody LoginInfo loginInfo, HttpServletRequest request, HttpServletResponse response)
+            @RequestBody LoginInfo loginInfo,
+            HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         Matcher matcher = mobileMatcher.matcher(loginInfo.getMobile());
         if(!matcher.find()) {
@@ -241,9 +252,9 @@ public class AuthRest {
 
         if(CommonUtils.isNull(loginInfo.getPassword())) {
             return ResponseEntity.ok(ResponseModel.builder().code(3).build());
-        } else if(loginInfo.getPassword().length() < 8 || loginInfo.getPassword().length() > 16) {
+        } else if(loginInfo.getPassword().length() < 6 || loginInfo.getPassword().length() > 10) {
             return ResponseEntity.ok(ResponseModel.builder().code(4)
-                    .data("کلمه عبور باید بین 8 تا 16 رقم باشد").build());
+                    .data("کلمه عبور باید بین 6 تا 10 رقم باشد").build());
         }
 
         if(!Arrays.stream(env.getActiveProfiles()).anyMatch(p -> "develop".matches(p))) {
@@ -261,17 +272,19 @@ public class AuthRest {
                 .otp(otp)
                 .mobile(loginInfo.getMobile())
                 .password(loginInfo.getPassword())
-                .username(loginInfo.getMobile()).build());
+                .username(loginInfo.getUsername()).build());
         Map<String, String> res = Collections.singletonMap("uuid", uuid.toString());
 
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(res).build());
     }
 
-    @PostMapping(path = "confirm-otp",
+    @PostMapping(path = "register/confirm-otp",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseModel> confirmOtp(
-            @RequestBody ConfirmInfo confirmInfo, HttpServletRequest request, HttpServletResponse response)
+    public ResponseEntity confirmOtp(
+            @RequestBody ConfirmInfo confirmInfo,
+            HttpSession session,
+            HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(CommonUtils.isNull(authentication.getPrincipal()) ||
@@ -310,6 +323,13 @@ public class AuthRest {
 
         this.loginComplete(saved, request, response);
         AppInfo appInfo = getAppInfo(request);
+
+        String attribute = (String) session.getAttribute("redirect-after-login");
+
+        if(!CommonUtils.isNull(attribute)) {
+            return redirect(attribute);
+        }
+
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(appInfo).build());
     }
 
@@ -318,6 +338,7 @@ public class AuthRest {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity login(
+            HttpSession session,
             @RequestBody LoginInfo loginInfo, HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -355,7 +376,26 @@ public class AuthRest {
         }
 
         AppInfo appInfo = getAppInfo(request);
+        String attribute = (String) session.getAttribute("redirect-after-login");
+
+        if(!CommonUtils.isNull(attribute)) {
+            return redirect(attribute);
+        }
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(appInfo).build());
+    }
+
+    public ResponseEntity<Object> redirect(String url) {
+
+        URI externalUri = null;
+        try {
+            externalUri = new URI(url);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setLocation(externalUri);
+
+        return new ResponseEntity<>(httpHeaders, HttpStatus.SEE_OTHER);
     }
 
     public AppInfo getAppInfo(HttpServletRequest request)
@@ -370,6 +410,7 @@ public class AuthRest {
                             .filter(e -> e.getAuthority().equalsIgnoreCase("ROLE_ADMIN"))
                             .map(e -> true).findFirst().orElse(false))
                     .username(userEntity.getUsername())
+                    .mobile(userEntity.getMobile())
                     .build();
         } else {
             appInfo = AppInfo.builder()

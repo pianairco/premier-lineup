@@ -34,12 +34,24 @@
                     <div class="col-12 text-center">
                       <p style="margin-bottom: 4px">
                         <mat-form-field appearance="outline" style="width: 100%;">
+                          <mat-label>نام کاربری</mat-label>
+                          <input type="text" matInput
+                                 formControlName="username"
+                                 [disabled]="wait"
+                                 required style="padding-bottom: 4px !important;">
+                          <mat-icon matSuffix>account_circle</mat-icon>
+                        </mat-form-field>
+                      </p>
+                    </div>
+                    <div class="col-12 text-center">
+                      <p style="margin-bottom: 4px">
+                        <mat-form-field appearance="outline" style="width: 100%;">
                           <mat-label>شماره موبایل</mat-label>
                           <input type="text" matInput
                                  formControlName="mobile"
                                  [disabled]="wait"
                                  required style="padding-bottom: 4px !important;">
-                          <mat-icon matSuffix>account_circle</mat-icon>
+                          <mat-icon matSuffix>call</mat-icon>
                         </mat-form-field>
                       </p>
                     </div>

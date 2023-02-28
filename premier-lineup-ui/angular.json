@@ -34,7 +34,8 @@
               "node_modules/bootstrap/dist/css/bootstrap.rtl.min.css",
               "node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
               "project/premier-lineup-ui/src/styles.css",
-              "project/premier-lineup-ui/src/manifest.json"
+              "project/premier-lineup-ui/src/manifest.json",
+              "node_modules/material-icons/iconfont/material-icons.css"
             ],
             "scripts": [
               "./node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
@@ -78,8 +79,8 @@
             "browserTarget": "premier-lineup-ui:build",
             "ssl": true,
             "proxyConfig": "project/premier-lineup-ui/src/proxy.conf.js",
-            "host": "192.168.1.4",
-            "port": 443
+            "host": "10.193.3.11",
+            "port": 9443
           },
           "configurations": {
             "production": {

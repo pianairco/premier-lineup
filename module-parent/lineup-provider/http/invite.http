@@ -1,0 +1,21 @@
+POST https://localhost:8443/api/modules/auth/app-info
+content-type: application/json;charset=UTF-8
+###
+POST https://localhost:8443/api/modules/auth/login
+content-type: application/json;charset=UTF-8
+
+{
+  "username": "ali",
+  "password": "123456",
+  "mobile": "09391366128",
+  "captcha": "15306"
+}
+###
+POST https://localhost:8443/api/modules/lineup/group/invitation/invite-to-group
+content-type: application/json;charset=UTF-8
+
+{
+  "groupId": 1
+}
+###
+GET https://localhost:8443/api/modules/lineup/group/invitation/follow-invitation?uid=52241c42-acb1-4d7a-a175-43bdd090e23f

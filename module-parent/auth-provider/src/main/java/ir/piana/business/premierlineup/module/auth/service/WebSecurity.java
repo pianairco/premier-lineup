@@ -1,5 +1,7 @@
 package ir.piana.business.premierlineup.module.auth.service;
 
+import ir.piana.business.premierlineup.common.security.SecurityMatchable;
+import ir.piana.business.premierlineup.common.security.SecurityUtils;
 import ir.piana.business.premierlineup.common.service.PianaCacheService;
 import ir.piana.business.premierlineup.module.auth.action.AuthAction;
 import ir.piana.business.premierlineup.module.auth.data.repository.UserRepository;
@@ -21,6 +23,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
@@ -28,6 +32,9 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 public class WebSecurity extends WebSecurityConfigurerAdapter {
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private List<SecurityMatchable> securityMatchableList;
 
     @Autowired
     @Qualifier("userDetailsService")
@@ -45,9 +52,12 @@ public class WebSecurity extends WebSecurityConfigurerAdapter {
     //https://www.logicbig.com/tutorials/spring-framework/spring-boot/jdbc-security-with-h2-console.html
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http.csrf().disable();
 //        http.cors().and().csrf().disable()
-                .authorizeRequests()
+        securityMatchableList.stream().forEach(s -> {
+            s.getMatches().stream().forEach(dto -> SecurityUtils.antMatchers(http, dto));
+        });
+        http.authorizeRequests()
                 .antMatchers(HttpMethod.POST,
                         "/api/sign-in",
                         "/api/sign-in/sub-domain",

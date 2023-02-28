@@ -1,0 +1,9 @@
+POST https://localhost:8443/api/modules/lineup/group/invitation/invite-to-group
+content-type: application/json;charset=UTF-8
+
+{
+  "groupId": 1,
+  "isPublic": true
+}
+###
+GET https://localhost:8443/api/modules/lineup/group/invitation/public/follow-invitation?uid=d7749d16-c0df-4b87-ba4f-747ac9e030f0

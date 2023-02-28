@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -191,3 +192,5 @@ public class GroupRest implements AfterPreparationImageAction {
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(allByUserId).build());
     }
 }
+
+

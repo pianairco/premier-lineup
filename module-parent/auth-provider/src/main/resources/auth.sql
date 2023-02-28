@@ -1,18 +1,18 @@
 create sequence IF NOT EXISTS master_seq START WITH 1000 INCREMENT BY 50;
 
 CREATE TABLE IF NOT EXISTS users (
-  id bigint primary key,
-  username varchar(64),
-  user_uuid char(36),
-  email varchar(256),
-  mobile char(11) NOT NULL,
-  password char(128),
-  email_verified number(1),
-  name varchar(64),
-  picture_url varchar(256),
-  locale char(2),
-  family_name varchar(64),
-  given_name varchar(64)
+    id bigint primary key,
+    mobile char(11) NOT NULL,
+    username varchar(64),
+    password char(128),
+    picture_url varchar(256),
+    locale char(2),
+    name varchar(64),
+    family_name varchar(64),
+    given_name varchar(64),
+    user_uuid char(36),
+    email varchar(256),
+    email_verified number(1)
 );
 
 -- image => https://lh3.googleusercontent.com/a-/AOh14Gg8K7kIHhlEo0-oJjPmGBG73ciHeRQnMFuRWRjQ4A=s96-c
@@ -34,3 +34,12 @@ INSERT INTO user_roles (id, user_id, role_name) select * from (
     select 1 id, 1 user_id, 'ROLE_ADMIN' role_name union
     select 2, 1, 'ROLE_USER'
 ) where not exists(select * from user_roles);
+
+CREATE TABLE IF NOT EXISTS invitation_request (
+    id bigint primary key,
+    inviter_id bigint not null,
+    unique_link char(36) not null,
+    try_count number(6) default 0,
+    registered_count number(6) default 0,
+    is_free number(1) default 1
+);

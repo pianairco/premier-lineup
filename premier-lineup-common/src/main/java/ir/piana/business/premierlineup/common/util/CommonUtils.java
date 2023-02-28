@@ -4,6 +4,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigDecimal;
 import java.math.MathContext;
+import java.util.Collection;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 public class CommonUtils {
@@ -48,6 +50,12 @@ public class CommonUtils {
         else if(obj instanceof String)
             return isNull((String)obj);
         return false;
+    }
+
+    public static boolean isNullOrEmpty(Collection set) {
+        if (set == null)
+            return true;
+        return set.isEmpty();
     }
 
     public static boolean isNumber(Object obj) {

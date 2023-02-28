@@ -21,6 +21,7 @@ public interface GroupsRepository extends JpaRepository<GroupsEntity, Long> {
     Optional<GroupsEntity> findByName(String name);
     Optional<GroupsEntity> findByUuid(String uuid);
     List<GroupsEntity> findAllByUserId(long userId);
+    Optional<GroupsEntity> findByUserIdAndId(long userId, long groupId);
 
     @Query(value = "SELECT g.* FROM groups g, groups_member gm WHERE gm.user_id = :userId and g.id = gm.group_id",
             nativeQuery = true)
