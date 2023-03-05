@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface FromGroupInvitationRequestRepository extends JpaRepository<FromGroupInvitationRequestEntity, Long> {
     Optional<FromGroupInvitationRequestEntity> findByUniqueId(String uniqueId);
+    Optional<FromGroupInvitationRequestEntity> findByGroupIdAndIsFree(long groupId, boolean isFree);
 }

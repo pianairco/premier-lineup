@@ -1,11 +1,12 @@
 <div class="container-fluid">
   <div class="row justify-content-md-center">
-    <div class="col col-sm-12 col-md-6 p-5 m-5 border" *ngIf="sharedLink">
+    <div class="col col-sm-12 col-md-6 p-5 m-5 border" *ngIf="id">
       <div class="d-grid">
-        <button class="btn btn-success" [cdkCopyToClipboard]="sharedLink">Copy Link</button>
+        <button class="btn btn-success" (click)="getPublicLink(id)">Copy Link</button>
+<!--        <button class="btn btn-success" [cdkCopyToClipboard]="sharedLink">Copy Link</button>-->
       </div>
     </div>
-    <div class="col col-sm-12 col-md-4 col-lg-3" *ngIf="!sharedLink">
+    <div class="col col-sm-12 col-md-4 col-lg-3" *ngIf="!id">
       <form class="row g-3" [formGroup]="form">
         <div class="col-12">
           <mat-form-field appearance="outline" style="width: 100%;">

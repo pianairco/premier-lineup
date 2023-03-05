@@ -6,14 +6,18 @@ import ir.piana.business.premierlineup.common.dev.uploadrest.StorageImageContain
 import ir.piana.business.premierlineup.common.model.ResponseModel;
 import ir.piana.business.premierlineup.common.service.PianaCacheService;
 import ir.piana.business.premierlineup.common.util.CommonUtils;
+import ir.piana.business.premierlineup.module.auth.data.entity.UserEntity;
 import ir.piana.business.premierlineup.module.auth.model.UserModel;
 import ir.piana.business.premierlineup.module.auth.service.AuthenticationService;
 import ir.piana.business.premierlineup.module.lineup.data.entity.*;
 import ir.piana.business.premierlineup.module.lineup.data.entity.GroupsImageEntity;
 import ir.piana.business.premierlineup.module.lineup.data.entity.GroupsMemberEntity;
+import ir.piana.business.premierlineup.module.lineup.data.repository.GroupMemberRepository;
 import ir.piana.business.premierlineup.module.lineup.data.repository.GroupsImageRepository;
 import ir.piana.business.premierlineup.module.lineup.data.repository.GroupsMemberRepository;
 import ir.piana.business.premierlineup.module.lineup.data.repository.GroupsRepository;
+import ir.piana.business.premierlineup.module.lineup.rest.invitation.InvitationRest;
+import ir.piana.business.premierlineup.module.lineup.rest.invitation.dto.InvitationToGroupDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
@@ -112,6 +116,9 @@ public class GroupRest implements AfterPreparationImageAction {
         }
     }
 
+    @Autowired
+    private InvitationRest invitationRest;
+
     @PostMapping(path = "save",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -128,7 +135,11 @@ public class GroupRest implements AfterPreparationImageAction {
         GroupsEntity save = groupsRepository.save(GroupsEntity.builder()
                 .userId(userModel.getUserEntity().getId())
                 .uuid(UUID.randomUUID().toString())
+                .isPublic(true)
                 .name(body.get("name")).build());
+
+        ResponseEntity<ResponseModel> responseModelResponseEntity = invitationRest.inviteToGroup(
+                InvitationToGroupDto.builder().groupId(save.getId()).isPublic(true).build());
 
         GroupsMemberEntity save1 = groupsMemberRepository.save(
                 GroupsMemberEntity.builder()
@@ -188,6 +199,22 @@ public class GroupRest implements AfterPreparationImageAction {
         }
         List<GroupsEntity> allByUserId = groupsRepository
                 .findAllMemberGroups(userModel.getUserEntity().getId());
+
+        return ResponseEntity.ok(ResponseModel.builder().code(0).data(allByUserId).build());
+    }
+
+    @Autowired
+    private GroupMemberRepository groupMemberRepository;
+
+    @GetMapping("members/{uuid}")
+    public ResponseEntity<ResponseModel> getMembers(
+            HttpServletRequest request, @PathVariable(name = "uuid") String uniqueId) {
+        UserModel userModel = authenticationService.getIfAuthenticated();
+        if(userModel == null) {
+            return ResponseEntity.ok(ResponseModel.builder().code(1).build());
+        }
+        List<UserEntity> allByUserId = groupMemberRepository
+                .findAllMembers(uniqueId);
 
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(allByUserId).build());
     }

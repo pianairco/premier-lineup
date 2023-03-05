@@ -46,6 +46,10 @@ CREATE TABLE IF NOT EXISTS from_group_invitation_request (
     constraint fk_from_group_invitation_request_2_groups foreign key (group_id) references groups(id)
 );
 
+INSERT INTO from_group_invitation_request (id, group_id, unique_id, is_free) select * from (
+    select 1 id, 1 group_id, 'ea60c897-e447-4bd9-9f5f-a9eb5a8eb6e0' unique_id, 1 is_free
+) where not exists(select * from from_group_invitation_request);
+
 CREATE TABLE IF NOT EXISTS group_invitation_request (
     id bigint primary key,
     unique_id char(36) not null,

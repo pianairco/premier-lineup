@@ -19,8 +19,8 @@ public class GroupsEntity {
     private long id;
     @Column(name = "user_id")
     private long userId;
-    /*@Column(name = "is_public")
-    private boolean isPublic;*/
+    @Column(name = "is_public")
+    private boolean isPublic;
     @Column(name = "uuid")
     private String uuid;
     @Column(name = "name")

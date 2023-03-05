@@ -102,7 +102,7 @@ export function ApplicationInitializerFactory(translate: TranslateService, injec
       deps: [InitializerService],
       multi: true
     },
-    ...test // <--- this can be used for a complete mock runtime modus
+    ...production // <--- this can be used for a complete mock runtime modus
     // ...production
   ],
   bootstrap: [AppComponent]

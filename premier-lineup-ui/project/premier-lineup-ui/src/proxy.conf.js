@@ -7,12 +7,12 @@ const PROXY_CONFIG = [
       "/resources",
       "/assets"
     ],
-    target: "https://localhost:8443",
+    target: "https://10.193.3.11:8443",
     // target: "https://diana.ir:8443",
     secure: false,
     changeOrigin: true,
     // cookieDomainRewrite: "localhost",
-    cookieDomainRewrite: "localhost",
+    cookieDomainRewrite: "10.193.3.11",
     withCredentials: false,
     onProxyRes: (proxyRes, req, res) => {
     // console.log(proxyRes);

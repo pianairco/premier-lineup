@@ -6,6 +6,7 @@ import {GroupCreatorComponent} from "@lineup-app/view/group/group-creator/group-
 import {AdminGroupsComponent} from "@lineup-app/view/group/admin-groups/admin-groups.component";
 import {MemberGroupsComponent} from "@lineup-app/view/group/member-groups/member-groups.component";
 import {JoinByUuidComponent} from "@lineup-app/view/group/join-by-uuid/join-by-uuid.component";
+import {PanelComponent} from "@lineup-app/view/group/panel/panel.component";
 
 const routes: Routes = [
   { path: '', component: GroupComponent, children: [
@@ -13,6 +14,7 @@ const routes: Routes = [
       { path: 'create', component: GroupCreatorComponent },
       { path: 'admin-groups', component: AdminGroupsComponent },
       { path: 'member-groups', component: MemberGroupsComponent },
+      { path: 'panel/:uuid', component: PanelComponent },
       { path: 'join-by-uuid/:uuid', component: JoinByUuidComponent },
       { path: 'join-by-uuid', component: JoinByUuidComponent }
     ]}

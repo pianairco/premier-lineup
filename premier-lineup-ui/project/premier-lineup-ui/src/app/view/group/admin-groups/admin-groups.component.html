@@ -16,7 +16,7 @@
           <h5 class="card-title">{{group['name']}}</h5>
           <button class="btn btn-primary mx-2">ورود</button>
 <!--          <button class="btn btn-success" (click)="nav(group['joinLink'])">کپی لینک اشتراک</button>-->
-          <button class="btn btn-success" [cdkCopyToClipboard]="group['joinLink']">کپی لینک اشتراک</button>
+          <button class="btn btn-success" (click)="getPublicLink(group['id'])" >کپی لینک اشتراک</button>
         </div>
       </div>
     </div>

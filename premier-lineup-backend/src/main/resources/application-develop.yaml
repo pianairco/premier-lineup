@@ -9,6 +9,7 @@ server:
     key-store-password: AsadMasad@1366
     key-alias: multishop
     enabled: true
+  address: 10.193.3.11
 debug:
   tenant:
     if-null: support

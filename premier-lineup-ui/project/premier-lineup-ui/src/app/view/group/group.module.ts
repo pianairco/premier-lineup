@@ -11,6 +11,7 @@ import { AdminGroupsComponent } from './admin-groups/admin-groups.component';
 import {SharedModule} from "@lineup-app/shared/shared.module";
 import {ClipboardModule} from "@angular/cdk/clipboard";
 import { JoinByUuidComponent } from './join-by-uuid/join-by-uuid.component';
+import { PanelComponent } from './panel/panel.component';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { JoinByUuidComponent } from './join-by-uuid/join-by-uuid.component';
     GroupImageComponent,
     MemberGroupsComponent,
     AdminGroupsComponent,
-    JoinByUuidComponent
+    JoinByUuidComponent,
+    PanelComponent
   ],
   imports: [
     CommonModule,
