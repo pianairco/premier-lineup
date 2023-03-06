@@ -9,10 +9,11 @@ import ir.piana.business.premierlineup.common.util.CommonUtils;
 import ir.piana.business.premierlineup.module.auth.data.entity.UserEntity;
 import ir.piana.business.premierlineup.module.auth.model.UserModel;
 import ir.piana.business.premierlineup.module.auth.service.AuthenticationService;
+import ir.piana.business.premierlineup.module.lineup.converters.UserOMemberConverter;
 import ir.piana.business.premierlineup.module.lineup.data.entity.*;
 import ir.piana.business.premierlineup.module.lineup.data.entity.GroupsImageEntity;
 import ir.piana.business.premierlineup.module.lineup.data.entity.GroupsMemberEntity;
-import ir.piana.business.premierlineup.module.lineup.data.repository.GroupMemberRepository;
+import ir.piana.business.premierlineup.module.lineup.data.repository.MemberOfGroupRepository;
 import ir.piana.business.premierlineup.module.lineup.data.repository.GroupsImageRepository;
 import ir.piana.business.premierlineup.module.lineup.data.repository.GroupsMemberRepository;
 import ir.piana.business.premierlineup.module.lineup.data.repository.GroupsRepository;
@@ -29,7 +30,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +56,12 @@ public class GroupRest implements AfterPreparationImageAction {
 
     @Autowired
     private PianaCacheService pianaCacheService;
+
+    @Autowired
+    private MemberOfGroupRepository memberOfGroupRepository;
+
+    @Autowired
+    private InvitationRest invitationRest;
 
     byte[] groupImage;
 
@@ -95,6 +101,7 @@ public class GroupRest implements AfterPreparationImageAction {
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(save.getPath()).build());
     }
 
+    //region path => image/{path}
 //    @PreAuthorize("hasRole('ROLE_AUTHENTICATED')")
     @GetMapping({"image", "image/{path}"})
     public byte[] getGroupImage(
@@ -115,10 +122,9 @@ public class GroupRest implements AfterPreparationImageAction {
             return byPath.getImageData();
         }
     }
+    //endregion
 
-    @Autowired
-    private InvitationRest invitationRest;
-
+    //region path => save
     @PostMapping(path = "save",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -148,7 +154,9 @@ public class GroupRest implements AfterPreparationImageAction {
                         .build());
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(save).build());
     }
+    //endregion
 
+    //region path => shared-link
     @GetMapping("shared-link")
     public ResponseEntity<ResponseModel> getSharedLink(@RequestParam("group-id") Long groupId) {
         Optional<GroupsEntity> byId = groupsRepository.findById(groupId);
@@ -156,7 +164,9 @@ public class GroupRest implements AfterPreparationImageAction {
             return ResponseEntity.ok(ResponseModel.builder().code(1).build());
         return ResponseEntity.ok(ResponseModel.builder().code(0).data("join/" + byId.get().getUuid()).build());
     }
+    //endregion
 
+    //region path => join/{uuid}
     @GetMapping("join/{uuid}")
     public ResponseEntity<ResponseModel> join(@PathVariable("uuid") String uuid) {
         UserModel userModel = authenticationService.getIfAuthenticated();
@@ -180,7 +190,9 @@ public class GroupRest implements AfterPreparationImageAction {
         groupsMemberRepository.save(save);
         return ResponseEntity.ok(ResponseModel.builder().code(0).build());
     }
+    //endregion
 
+    //region path => admin-groups
     @GetMapping("admin-groups")
     public ResponseEntity<ResponseModel> getAdminGroups(HttpServletRequest request) {
         UserModel userModel = authenticationService.getIfAuthenticated();
@@ -190,7 +202,9 @@ public class GroupRest implements AfterPreparationImageAction {
         List<GroupsEntity> allByUserId = groupsRepository.findAllByUserId(userModel.getUserEntity().getId());
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(allByUserId).build());
     }
+    //endregion
 
+    //region path => member-groups
     @GetMapping("member-groups")
     public ResponseEntity<ResponseModel> getMemberGroups(HttpServletRequest request) {
         UserModel userModel = authenticationService.getIfAuthenticated();
@@ -202,10 +216,12 @@ public class GroupRest implements AfterPreparationImageAction {
 
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(allByUserId).build());
     }
+    //endregion
 
     @Autowired
-    private GroupMemberRepository groupMemberRepository;
+    private UserOMemberConverter userOMemberConverter;
 
+    //region path => members/{uuid}
     @GetMapping("members/{uuid}")
     public ResponseEntity<ResponseModel> getMembers(
             HttpServletRequest request, @PathVariable(name = "uuid") String uniqueId) {
@@ -213,11 +229,13 @@ public class GroupRest implements AfterPreparationImageAction {
         if(userModel == null) {
             return ResponseEntity.ok(ResponseModel.builder().code(1).build());
         }
-        List<UserEntity> allByUserId = groupMemberRepository
+        List<UserEntity> allByUserId = memberOfGroupRepository
                 .findAllMembers(uniqueId);
 
-        return ResponseEntity.ok(ResponseModel.builder().code(0).data(allByUserId).build());
+        return ResponseEntity.ok(ResponseModel.builder().code(0)
+                .data(userOMemberConverter.toMemberModels(allByUserId)).build());
     }
+    //endregion
 }
 
 

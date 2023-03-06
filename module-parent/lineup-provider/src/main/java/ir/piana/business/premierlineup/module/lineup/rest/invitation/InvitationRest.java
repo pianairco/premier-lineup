@@ -57,6 +57,7 @@ public class InvitationRest {
     @Autowired
     private GroupsJoinRequestRepository groupsJoinRequestRepository;
 
+    //region path => invite-to-group
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping(path = "invite-to-group",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -108,6 +109,7 @@ public class InvitationRest {
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(link).build());
     }
 
+    //region path => public/link
     @GetMapping("public/link")
     public ResponseEntity<ResponseModel> getPublicInvitationLink(HttpSession session, @RequestParam("group-id") long groupId) {
         Optional<FromGroupInvitationRequestEntity> byGroupIdAndFree = fromGroupInvitationRequestRepository
@@ -127,7 +129,9 @@ public class InvitationRest {
                     .build()).code(0).build());
         else return ResponseEntity.internalServerError().build();
     }
+    //endregion
 
+    //region path => public/follow-invitation
     @GetMapping("public/follow-invitation")
     public ResponseEntity<Object> publicFollowInvitation(
             HttpSession session,
@@ -167,6 +171,7 @@ public class InvitationRest {
         https://localhost:8443/api/modules/lineup/group/invitation/follow-invitation?uid=52241c42-acb1-4d7a-a175-43bdd090e23f
         return redirect("https://10.193.3.11:9443/#/root/authenticated/group/member-groups");
     }
+    //endregion
 
     private String createLink(String uid, boolean isPublic) {
         return "https://10.193.3.11:9443/api/modules/lineup/group/invitation/" +
@@ -174,6 +179,7 @@ public class InvitationRest {
                 "uid=" + uid;
     }
 
+    //region path => private/follow-invitation
     @GetMapping("private/follow-invitation")
     public ResponseEntity<Object> privateFollowInvitation(
             HttpSession session,
@@ -210,6 +216,7 @@ public class InvitationRest {
         https://localhost:8443/api/modules/lineup/group/invitation/follow-invitation?uid=52241c42-acb1-4d7a-a175-43bdd090e23f
         return redirect("https://10.193.3.11:9443/#/root/authenticated/group/member-groups");
     }
+    //endregion
 
     public ResponseEntity<Object> redirect(String url) {
 

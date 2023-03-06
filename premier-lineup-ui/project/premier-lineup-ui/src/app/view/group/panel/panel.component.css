@@ -1,0 +1,48 @@
+@media (min-width: 768px) {
+  .box {
+    border: solid 1px #d2cdcd;
+    border-radius: 8px;
+    box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%);
+  }
+}
+
+.box {
+  border: solid 1px #d2cdcd;
+  border-radius: 8px;
+}
+
+
+.example-card {
+  max-width: 100%;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.example-header-image {
+  margin-top: auto !important;
+  margin-bottom: auto !important;
+  /*background-image: url('../../../../assets/images/person/cr7.jpg');*/
+  background-size: cover;
+  height: 40px;
+}
+
+.example-header-title {
+  margin-top: auto !important;
+  margin-bottom: auto !important;
+  width: 100% !important;
+}
+
+.card-header-name {
+  height: 40px;
+}
+
+.card-header-name > span {
+  vertical-align: middle;
+  display: inline-block;
+}
+
+.float-left {
+  float: left;
+}

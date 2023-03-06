@@ -95,10 +95,12 @@ public class AuthRest {
         kavenegarApi = new KavenegarApi("6B6773663258696B304F65576F4433516739573856513D3D");
     }
 
+    //region path => test
     @GetMapping(path = "test")
     public ResponseEntity<String> getTest() {
         return ResponseEntity.ok("hello test!");
     }
+    //endregion
 
     public String sendOtp(LoginInfo loginInfo) {
         String otp = RandomStringUtils.randomNumeric(4);
@@ -152,6 +154,7 @@ public class AuthRest {
         return otp;
     }
 
+    //region path => request-forget-otp
     @PostMapping(path = "request-forget-otp",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -194,7 +197,9 @@ public class AuthRest {
         return ResponseEntity.ok(ResponseModel.builder().code(0)
                 .data(Collections.singletonMap("uuid", uuid.toString())).build());
     }
+    //endregion
 
+    //region path => confirm-forget-otp
     @PostMapping(path = "confirm-forget-otp",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -233,7 +238,9 @@ public class AuthRest {
         AppInfo appInfo = getAppInfo(request);
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(appInfo).build());
     }
+    //endregion
 
+    //region path => register/request-otp
     @PostMapping(path = "register/request-otp",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -277,7 +284,9 @@ public class AuthRest {
 
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(res).build());
     }
+    //endregion
 
+    //region path => register/confirm-otp
     @PostMapping(path = "register/confirm-otp",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -332,7 +341,9 @@ public class AuthRest {
 
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(appInfo).build());
     }
+    //endregion
 
+    //region path => login
     @PreAuthorize("!hasRole('ROLE_AUTHENTICATED')")
     @PostMapping(path = "login",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -383,6 +394,7 @@ public class AuthRest {
         }
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(appInfo).build());
     }
+    //endregion
 
     public ResponseEntity<Object> redirect(String url) {
 
@@ -422,6 +434,7 @@ public class AuthRest {
         return appInfo;
     }
 
+    //region path => app-info
     @CrossOrigin
     @PostMapping(path = "app-info",
             consumes = MediaType.APPLICATION_JSON_VALUE,
@@ -431,6 +444,7 @@ public class AuthRest {
         AppInfo appInfo = getAppInfo(request);
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(appInfo).build());
     }
+    //endregion
 
     private void loginComplete(UserEntity userEntity, HttpServletRequest request, HttpServletResponse response) {
         List<GrantedAuthority> authorities = userEntity.getUserRolesEntities().stream()
@@ -446,6 +460,7 @@ public class AuthRest {
                 authenticate);
     }
 
+    //region path => logout
     @PostMapping(path = "logout",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
@@ -457,6 +472,7 @@ public class AuthRest {
         AppInfo appInfo = getAppInfo(request);
         return ResponseEntity.ok(ResponseModel.builder().code(0).data(appInfo).build());
     }
+    //endregion
 
     /*@CrossOrigin
     @PostMapping(path = "app-info",

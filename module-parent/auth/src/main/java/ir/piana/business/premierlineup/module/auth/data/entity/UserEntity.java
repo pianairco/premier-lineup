@@ -44,4 +44,10 @@ public class UserEntity {
     private List<UserRolesEntity> userRolesEntities;
     @Transient
     private String otp;
+
+    public UserEntity(String username, String mobile, String pictureUrl) {
+        this.username = username;
+        this.mobile = mobile;
+        this.pictureUrl = pictureUrl;
+    }
 }
